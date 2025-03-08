@@ -7,7 +7,10 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\{
     HomeController,
     AdminHomeController,
-    RaceController
+    RaceController,
+    EjemplarController,
+    RemateController,
+    EjemplarRaceController
 };
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +42,10 @@ Route::middleware(['auth'])->group(function () {
         'roles'=> RoleController::class,
         'permissions'=>PermissionController::class,
         'races'=>RaceController::class,
+        'ejemplars'=>EjemplarController::class,
+        'remates'=>RemateController::class,
+        'parametros'=>EjemplarRaceController::class
     ]);
+
 
 });

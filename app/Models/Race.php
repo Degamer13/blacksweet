@@ -12,5 +12,18 @@ class Race extends Model
     // Definir los campos que son asignables en masa
     protected $fillable = ['name'];
 
-    // Si necesitas relaciones o métodos personalizados, agrégalos aquí
+    // Relación con EjemplarRace
+    public function ejemplarRaces()
+    {
+        return $this->hasMany(EjemplarRace::class, 'race_id');
+    }
+
+    // Eliminar en cascada cuando se elimine una carrera
+    protected static function booted()
+    {
+        static::deleting(function ($race) {
+            // Eliminar todos los ejemplares asociados cuando se elimina la carrera
+            $race->ejemplarRaces()->delete();
+        });
+    }
 }

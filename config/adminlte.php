@@ -360,21 +360,21 @@ return [
                 ],
                 [
                     'text' => 'Ejemplares',
-                    'url' => 'ejemplares',
+                    'url' => 'ejemplars',
                     'icon' => 'fas fa-th-list',
                     'can' => 'ejemplar-list',  // Verificar si el usuario tiene el permiso 'categoria-list'
                 ],
                 [
-                    'text' => 'Clientes',
-                    'url' => 'clientes',
+                    'text' => 'Parametros para Remates',
+                    'url' => 'parametros',
                     'icon' => 'fas fa-user-tie',
-                    'can' => 'cliente-list',  // Verificar si el usuario tiene el permiso 'cliente-list'
+                    'can' => 'parametro-list',  // Verificar si el usuario tiene el permiso 'cliente-list'
                 ],
                 [
-                    'text' => 'Proveedores',
-                    'url' => 'proveedores',
+                    'text' => 'Remates',
+                    'url' => 'remates',
                     'icon' => 'fas fa-truck',
-                    'can' => 'proveedor-list',  // Verificar si el usuario tiene el permiso 'proveedor-list'
+                    'can' => 'remate-list',  // Verificar si el usuario tiene el permiso 'proveedor-list'
                 ],
                 [
                     'text' => 'Productos',

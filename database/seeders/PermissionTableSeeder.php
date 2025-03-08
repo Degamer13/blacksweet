@@ -38,7 +38,18 @@
         'remate-edit',
         'remate-delete',
         'remate-pdf',
-
+        'race-list',
+        'race-show',
+        'race-create',
+        'race-edit',
+        'race-delete',
+        'ejemplar-list',
+        'ejemplar-show',
+        'ejemplar-create',
+        'ejemplar-edit',
+        'ejemplar-delete',
+        'porcentaje-show',
+        'pote-show'
 
 
         ];
