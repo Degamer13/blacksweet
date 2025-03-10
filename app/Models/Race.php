@@ -26,4 +26,16 @@ class Race extends Model
             $race->ejemplarRaces()->delete();
         });
     }
+       // Relación con Ejemplar a través de la tabla ejemplar_race
+    public function ejemplars()
+    {
+        return $this->hasManyThrough(
+            Ejemplar::class,   // Modelo relacionado
+            EjemplarRace::class, // Modelo intermedio
+            'race_id',          // Clave foránea en la tabla intermedia
+            'id',               // Clave primaria en la tabla ejemplar
+            'id',               // Clave primaria en la tabla carreras
+            'ejemplar_id'       // Clave foránea en la tabla intermedia
+        );
+    }
 }

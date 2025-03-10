@@ -12,20 +12,23 @@ use App\Http\Controllers\{
     RemateController,
     EjemplarRaceController
 };
+use App\Models\Ejemplar; // Asegúrate de importar el modelo Ejemplar
+
 /*
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
 | Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
+|---------------------------------------------------------------------------
+| Aquí es donde puedes registrar las rutas web para tu aplicación.
+| Las rutas se cargan mediante el RouteServiceProvider y todas ellas serán
+| asignadas al grupo de middleware "web".
+| 
 */
+
 // Login
 Route::get('/', function () {
     return view("welcome");
 });
+
 // Rutas de autenticación
 Auth::routes();
 
@@ -38,14 +41,15 @@ Route::get('/panel-admin', [AdminHomeController::class, 'index'])->name('adminho
 // Rutas protegidas para el sistema de inventario
 Route::middleware(['auth'])->group(function () {
     Route::resources([
-        'users'=> UserController::class,
-        'roles'=> RoleController::class,
-        'permissions'=>PermissionController::class,
-        'races'=>RaceController::class,
-        'ejemplars'=>EjemplarController::class,
-        'remates'=>RemateController::class,
-        'parametros'=>EjemplarRaceController::class
+        'users' => UserController::class,
+        'roles' => RoleController::class,
+        'permissions' => PermissionController::class,
+        'races' => RaceController::class,
+        'ejemplars' => EjemplarController::class,
+        'remates' => RemateController::class,
+        'parametros' => EjemplarRaceController::class
     ]);
 
-
+  // Ruta para obtener los ejemplares de una carrera
+    Route::get('/ejemplares/{race_id}', [RemateController::class, 'getEjemplarsByRace'])->name('ejemplares.byRace');
 });

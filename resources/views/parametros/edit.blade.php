@@ -33,8 +33,8 @@
         <div class="form-group">
             <label for="status">Estado</label>
             <select name="status" class="form-control" required>
-                <option value="activado" {{ $status == 'activado' ? 'selected' : '' }}>Activado</option>
-                <option value="desactivado" {{ $status == 'desactivado' ? 'selected' : '' }}>Desactivado</option>
+                <option value="activar" {{ $status == 'activar' ? 'selected' : '' }}>Activar</option>
+                <option value="desactivar" {{ $status == 'desactivar' ? 'selected' : '' }}>Desactivar</option>
             </select>
         </div>
 

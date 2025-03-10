@@ -9,8 +9,11 @@ return new class extends Migration {
         Schema::create('remates', function (Blueprint $table) {
             $table->id();
             $table->integer('number');
-            $table->foreignId('race_id')->constrained('races')->onDelete('cascade'); // Relación con la tabla races
-            $table->foreignId('ejemplar_id')->constrained('ejemplars')->onDelete('cascade'); // Relación con la tabla ejemplars
+
+            // Claves foráneas separadas
+            $table->unsignedBigInteger('race_id');
+            $table->unsignedBigInteger('ejemplar_id');
+
             $table->string('cliente');
             $table->decimal('monto1', 10, 2);
             $table->decimal('monto2', 10, 2);
@@ -20,13 +23,19 @@ return new class extends Migration {
             $table->decimal('porcentaje', 10, 2);
             $table->decimal('pote', 10, 2)->nullable();
             $table->decimal('total_pagar', 10, 2);
+            $table->decimal('total_subasta', 10, 2);
+
             // Campos para la suma de cada monto
             $table->decimal('subasta1', 10, 2)->default(0);
             $table->decimal('subasta2', 10, 2)->default(0);
             $table->decimal('subasta3', 10, 2)->default(0);
             $table->decimal('subasta4', 10, 2)->default(0);
-             $table->decimal('total_subasta', 10, 2);
+
             $table->timestamps();
+
+            // Relaciones con 'races' y 'ejemplars'
+            $table->foreign('race_id')->references('id')->on('races')->onDelete('cascade');
+            $table->foreign('ejemplar_id')->references('id')->on('ejemplars')->onDelete('cascade');
         });
     }
 

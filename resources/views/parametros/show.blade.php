@@ -19,7 +19,8 @@
                 <tr>
                     <td>{{ $ejemplarRace->id }}</td>
                     <td>{{ $ejemplarRace->ejemplar->name }}</td>
-                    <td>{{ $ejemplarRace->status }}</td>
+                  <td>{{ $ejemplarRace->status == 'activar' ? 'Activo' : 'Desactivado' }}</td>
+
                    <!-- <td>
                         <a href="{{ route('parametros.edit', $ejemplarRace->id) }}" class="btn btn-warning">Editar</a>
                         <form action="{{ route('parametros.destroy', $ejemplarRace->id) }}" method="POST" style="display:inline;">

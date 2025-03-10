@@ -43,7 +43,7 @@
                     <td>
                         <!-- Comprobar si hay ejemplares activos y mostrar el mensaje correspondiente -->
                         @php
-                            $activeEjemplars = $race->ejemplarRaces()->where('status', 'activado')->get();
+                            $activeEjemplars = $race->ejemplarRaces()->where('status', 'activar')->get();
                         @endphp
                         @if($activeEjemplars->isNotEmpty())
                             <p>Carrera Activada</p> <!-- Mensaje cuando hay ejemplares activos -->

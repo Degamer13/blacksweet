@@ -53,7 +53,7 @@ public function store(Request $request)
             EjemplarRace::create([
                 'race_id' => $raceIds[0],  // Usamos el primer race_id, ya que puedes seleccionar solo uno por carrera
                 'ejemplar_id' => $ejemplar_id,
-                'status' => 'desactivado',  // Asignamos el estado desactivado por defecto
+                'status' => 'desactivar',  // Asignamos el estado desactivado por defecto
             ]);
         }
     }
@@ -86,7 +86,7 @@ public function edit($race_id)
     $status = EjemplarRace::where('race_id', $race_id)
                 ->whereIn('ejemplar_id', $selectedEjemplars)
                 ->first()
-                ->status ?? 'desactivado'; // Si no hay relación, asignar "desactivado"
+                ->status ?? 'desactivar'; // Si no hay relación, asignar "desactivado"
 
     return view('parametros.edit', compact('race', 'races', 'ejemplars', 'selectedEjemplars', 'status'));
 }
@@ -100,7 +100,7 @@ public function edit($race_id)
         'race_id' => 'required|exists:races,id',  // Validar que el race_id exista
         'ejemplars' => 'required|array',  // Aseguramos que haya ejemplares
         'ejemplars.*' => 'exists:ejemplars,id',  // Validar que los ejemplares existan
-        'status' => 'required|in:activado,desactivado',  // Validar el status
+        'status' => 'required|in:activar,desactivar',  // Validar el status
     ]);
 
     // Obtener la carrera
