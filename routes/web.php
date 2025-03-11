@@ -21,7 +21,7 @@ use App\Models\Ejemplar; // Asegúrate de importar el modelo Ejemplar
 | Aquí es donde puedes registrar las rutas web para tu aplicación.
 | Las rutas se cargan mediante el RouteServiceProvider y todas ellas serán
 | asignadas al grupo de middleware "web".
-| 
+|
 */
 
 // Login
@@ -52,4 +52,6 @@ Route::middleware(['auth'])->group(function () {
 
   // Ruta para obtener los ejemplares de una carrera
     Route::get('/ejemplares/{race_id}', [RemateController::class, 'getEjemplarsByRace'])->name('ejemplares.byRace');
+    Route::get('/validar-ejemplar/{ejemplar_id}', [RemateController::class, 'validarEjemplar']);
+
 });

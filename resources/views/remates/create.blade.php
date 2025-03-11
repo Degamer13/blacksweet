@@ -27,6 +27,7 @@
                 <select name="ejemplar_id" id="ejemplar_id" class="form-control" required>
                     <option value="">Seleccione un Ejemplar</option>
                 </select>
+                <span id="mensaje-validacion" style="font-weight: bold;"></span>
             </div>
 
             <div class="form-group">
@@ -63,31 +64,60 @@
         </form>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Esta función actualiza los ejemplares en función de la carrera seleccionada
-        document.getElementById('race_id').addEventListener('change', function() {
-            var raceId = this.value;
-            fetch(`/ejemplares/${raceId}`)
-                .then(response => response.json())
-                .then(data => {
-                    var ejemplarSelect = document.getElementById('ejemplar_id');
-                    ejemplarSelect.innerHTML = '<option value="">Seleccione un Ejemplar</option>';
-                    data.forEach(function(ejemplar) {
-                        ejemplarSelect.innerHTML += `<option value="${ejemplar.id}">${ejemplar.name}</option>`;
+        $(document).ready(function () {
+            // Cargar los ejemplares en función de la carrera seleccionada
+            $('#race_id').change(function () {
+                let raceId = $(this).val();
+                if (raceId) {
+                    $.ajax({
+                        url: `/ejemplares/${raceId}`,
+                        type: 'GET',
+                        success: function (data) {
+                            $('#ejemplar_id').html('<option value="">Seleccione un Ejemplar</option>');
+                            data.forEach(function (ejemplar) {
+                                $('#ejemplar_id').append(`<option value="${ejemplar.id}">${ejemplar.name}</option>`);
+                            });
+                        }
                     });
-                });
-        });
+                } else {
+                    $('#ejemplar_id').html('<option value="">Seleccione un Ejemplar</option>');
+                }
+            });
 
-        // Calculamos los montos automáticamente
-        document.getElementById('monto1').addEventListener('input', function() {
-            var monto1 = parseFloat(this.value);
-            if (!isNaN(monto1)) {
-                document.getElementById('monto2').value = Math.floor(monto1 / 2);
-                var monto2 = parseFloat(document.getElementById('monto2').value);
-                document.getElementById('monto3').value = Math.floor(monto2 / 2);
-                var monto3 = parseFloat(document.getElementById('monto3').value);
-                document.getElementById('monto4').value = Math.floor(monto3 / 2);
-            }
+            // Validar si el ejemplar ya está registrado
+            $('#ejemplar_id').change(function () {
+                let ejemplar_id = $(this).val();
+                if (ejemplar_id) {
+                    $.ajax({
+                        url: `/validar-ejemplar/${ejemplar_id}`,
+                        type: 'GET',
+                        success: function (response) {
+                            $('#mensaje-validacion').text(response.message).css('color', 'green');
+                        },
+                        error: function (xhr) {
+                            $('#mensaje-validacion').text(xhr.responseJSON.message).css('color', 'red');
+                        }
+                    });
+                } else {
+                    $('#mensaje-validacion').text('');
+                }
+            });
+
+            // Calcular montos automáticamente asegurando múltiplos de 10
+            $('#monto1').on('input', function () {
+                let monto1 = parseFloat($(this).val());
+                if (!isNaN(monto1)) {
+                    let monto2 = Math.ceil((monto1 / 2) / 10) * 10;
+                    let monto3 = Math.ceil((monto2 / 2) / 10) * 10;
+                    let monto4 = Math.ceil((monto3 / 2) / 10) * 10;
+
+                    $('#monto2').val(monto2);
+                    $('#monto3').val(monto3);
+                    $('#monto4').val(monto4);
+                }
+            });
         });
     </script>
 @endsection
