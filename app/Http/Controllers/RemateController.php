@@ -242,3 +242,4 @@ public function actualizarRemate(Request $request)
         return redirect()->route('remates.index')->with('success', 'Remate eliminado.');
     }
 }
+
