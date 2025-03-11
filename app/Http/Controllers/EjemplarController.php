@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ejemplar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class EjemplarController extends Controller
 {
@@ -16,7 +17,7 @@ class EjemplarController extends Controller
     }
 
     public function index(Request $request)
-    {    
+    {
         $buscarpor = $request->get('buscarpor');
         $ejemplars = Ejemplar::where('name', 'like', '%' . $buscarpor . '%')->paginate(5);
         return view('ejemplars.index', compact('ejemplars', 'buscarpor'));
@@ -38,6 +39,22 @@ class EjemplarController extends Controller
         ]);
 
         return redirect()->route('ejemplars.index')->with("success", "Ejemplar registrado con éxito");
+    }
+    public function validarEjemplar($name)
+    {
+        $name = trim($name); // Elimina espacios en blanco innecesarios
+
+        if (empty($name)) {
+            return response()->json(['message' => '⚠️ El nombre no puede estar vacío'], 400);
+        }
+
+        $existe = Ejemplar::where('name', Str::lower($name))->exists(); // Normaliza a minúsculas
+
+        if ($existe) {
+            return response()->json(['message' => '❌ Ya se encuentra registrado el ejemplar'], 400);
+        } else {
+            return response()->json(['message' => '✅ Felicidades, el ejemplar está disponible'], 200);
+        }
     }
 
     public function show(Ejemplar $ejemplar)

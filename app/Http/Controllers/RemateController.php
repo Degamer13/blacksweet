@@ -86,9 +86,10 @@ public function store(Request $request)
 $monto1 = $request->monto1;
 
 // Asegurar que los valores siempre terminen en 0
-$monto2 = ceil($monto1 / 2 / 10) * 10;
-$monto3 = ceil($monto2 / 2 / 10) * 10;
-$monto4 = ceil($monto3 / 2 / 10) * 10;
+$monto2 = ceil($monto1 / 2 );
+$monto3 = ceil($monto2 / 2 );
+$monto4 = ceil($monto3 / 2 / 5) * 5;
+
 
 $total = $monto1 + $monto2 + $monto3 + $monto4;
 

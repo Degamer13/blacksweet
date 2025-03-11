@@ -63,6 +63,7 @@ public function store(Request $request)
 }
 
 
+
     public function show($race_id)
     {
         $race = Race::findOrFail($race_id);

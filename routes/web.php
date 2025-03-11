@@ -10,7 +10,8 @@ use App\Http\Controllers\{
     RaceController,
     EjemplarController,
     RemateController,
-    EjemplarRaceController
+    EjemplarRaceController,
+    GacetaController
 };
 use App\Models\Ejemplar; // Asegúrate de importar el modelo Ejemplar
 
@@ -47,11 +48,15 @@ Route::middleware(['auth'])->group(function () {
         'races' => RaceController::class,
         'ejemplars' => EjemplarController::class,
         'remates' => RemateController::class,
-        'parametros' => EjemplarRaceController::class
+        'parametros' => EjemplarRaceController::class,
+        'gacetas'=>GacetaController::class
     ]);
 
   // Ruta para obtener los ejemplares de una carrera
     Route::get('/ejemplares/{race_id}', [RemateController::class, 'getEjemplarsByRace'])->name('ejemplares.byRace');
     Route::get('/validar-ejemplar/{ejemplar_id}', [RemateController::class, 'validarEjemplar']);
+    Route::get('/validar-ejemplar/nombre/{name}', [EjemplarController::class, 'validarEjemplar'])
+    ->where('name', '.*'); // Permite nombres con espacios y caracteres especiales
+
 
 });

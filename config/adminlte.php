@@ -377,10 +377,10 @@ return [
                     'can' => 'remate-list',  // Verificar si el usuario tiene el permiso 'proveedor-list'
                 ],
                 [
-                    'text' => 'Productos',
-                    'url' => 'productos',
+                    /*'text' => 'Gacetas',
+                    'url' => '#',
                     'icon' => 'fas fa-boxes',
-                    'can' => 'producto-list',  // Verificar si el usuario tiene el permiso 'producto-list'
+                    'can' => 'producto-list',  // Verificar si el usuario tiene el permiso 'producto-list'*/
                 ],
                 [
                     'text' => 'Compras',
@@ -401,9 +401,10 @@ return [
         ],
         ['header' => 'labels'],
         [
-            'text' => 'important',
+            'text' => 'Gaceta',
+            'url' => 'gacetas',
             'icon_color' => 'red',
-            'url' => '#',
+
         ],
         [
             'text' => 'warning',

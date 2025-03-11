@@ -105,13 +105,13 @@
                 }
             });
 
-            // Calcular montos automáticamente asegurando múltiplos de 10
+            // Calcular montos automáticamente
             $('#monto1').on('input', function () {
                 let monto1 = parseFloat($(this).val());
                 if (!isNaN(monto1)) {
-                    let monto2 = Math.ceil((monto1 / 2) / 10) * 10;
-                    let monto3 = Math.ceil((monto2 / 2) / 10) * 10;
-                    let monto4 = Math.ceil((monto3 / 2) / 10) * 10;
+                    let monto2 = Math.ceil((monto1 / 2));
+                    let monto3 = Math.ceil((monto2 / 2) );
+                    let monto4 = Math.ceil((monto3 / 2) / 5) * 5;
 
                     $('#monto2').val(monto2);
                     $('#monto3').val(monto3);
