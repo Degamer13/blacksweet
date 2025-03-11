@@ -57,6 +57,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/validar-ejemplar/{ejemplar_id}', [RemateController::class, 'validarEjemplar']);
     Route::get('/validar-ejemplar/nombre/{name}', [EjemplarController::class, 'validarEjemplar'])
     ->where('name', '.*'); // Permite nombres con espacios y caracteres especiales
-
+    Route::post('remates/actualizar', [RemateController::class, 'actualizarRemate'])->name('remates.actualizarRemate');
 
 });

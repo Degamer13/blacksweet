@@ -3,7 +3,7 @@
 @section('content')
 <style>
     .table-bordered{
-        border: 1px solid #47bb19;
+        border: 5px solid #47bb19;
     }
 </style>
 <div class="container">
@@ -14,7 +14,7 @@
 
     <!-- Formulario de búsqueda -->
     <div class="col-12 col-md-6 mb-3">
-        <form  method="GET">
+        <form method="GET">
             <div class="input-group">
                 <input type="text" name="search" class="form-control me-2" placeholder="Buscar..." value="{{ request('search') }}">
                 <div class="input-group-append">
@@ -28,7 +28,6 @@
         </form>
     </div>
 
-
     <!-- Pestañas para filtrar por carreras -->
     <ul class="nav nav-tabs" id="raceTabs">
         @foreach($races as $race)
@@ -41,6 +40,9 @@
     <div class="tab-content mt-3">
         @foreach($races as $race)
         <div class="tab-pane fade" id="race{{ $race->id }}">
+            <!-- Agregar campo oculto para race_id -->
+            <input type="hidden" class="race-id" value="{{ $race->id }}">
+
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead class="table-dark">
@@ -70,7 +72,8 @@
                             <td>{{ $remate->total }}</td>
                             <td class="pote">{{ $remate->pote }}</td>
                             <td>
-                                <a href="{{ route('remates.edit', $remate) }}" class="btn btn-warning btn-sm">Editar</a>
+                                <a href="{{ route('remates.edit', $remate->id) }}" class="btn btn-warning btn-sm">Editar</a>
+
                                 <form action="{{ route('remates.destroy', $remate) }}" method="POST" style="display:inline;">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar este remate?')">Eliminar</button>
@@ -138,29 +141,63 @@
             var activeTab = $('.nav-tabs .nav-link.active').attr('href');
             var activeTable = $(activeTab).find('table');
 
+            // Variables para almacenar los totales por monto
             let totalM1 = 0, totalM2 = 0, totalM3 = 0, totalM4 = 0;
 
+            // Recorremos cada monto en las celdas correspondientes
             activeTable.find('.monto1').each(function () { totalM1 += parseFloat($(this).text()) || 0; });
             activeTable.find('.monto2').each(function () { totalM2 += parseFloat($(this).text()) || 0; });
             activeTable.find('.monto3').each(function () { totalM3 += parseFloat($(this).text()) || 0; });
             activeTable.find('.monto4').each(function () { totalM4 += parseFloat($(this).text()) || 0; });
 
+            // Asignar los valores a las celdas de la tabla para cada subasta
             $(activeTab).find('#subasta1').text(totalM1);
             $(activeTab).find('#subasta2').text(totalM2);
             $(activeTab).find('#subasta3').text(totalM3);
             $(activeTab).find('#subasta4').text(totalM4);
 
+            // Calcular el total de la subasta
             let totalSubasta = totalM1 + totalM2 + totalM3 + totalM4;
             $(activeTab).find('#total_subasta').text(totalSubasta);
 
-            let porcentaje = totalSubasta * 0.7;
+            // Calcular el porcentaje (30%)
+            let porcentaje = totalSubasta * 0.3;
             $(activeTab).find('#porcentaje').text(porcentaje.toFixed(2));
 
+            // Obtener el valor del pote
             let pote = parseFloat($(activeTab).find('.pote:first').text()) || 0;
             $(activeTab).find('#pote_value').text(pote.toFixed(2));
 
+            // Calcular el total a pagar
             let totalPagar = porcentaje + pote;
             $(activeTab).find('#total_pagar').text(totalPagar.toFixed(2));
+
+            // Obtener el ID de la carrera activa
+            var raceId = $(activeTab).find('.race-id').val(); // Ahora el race_id estará presente
+
+            // Enviar los datos de los totales a la base de datos via Ajax
+            $.ajax({
+                url: "{{ route('remates.actualizarRemate') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    race_id: raceId,  // Asegúrate de que raceId esté presente
+                    totalM1: totalM1,
+                    totalM2: totalM2,
+                    totalM3: totalM3,
+                    totalM4: totalM4,
+                    totalSubasta: totalSubasta,
+                    porcentaje: porcentaje,
+                    pote: pote,
+                    totalPagar: totalPagar
+                },
+                success: function(response) {
+                    alert('Totales actualizados correctamente');
+                },
+                error: function(xhr, status, error) {
+                    alert('Ocurrió un error al actualizar los totales: ' + xhr.responseJSON.message);  // Mostrar el mensaje del error
+                }
+            });
         });
     });
 </script>

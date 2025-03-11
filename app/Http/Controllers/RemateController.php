@@ -7,6 +7,7 @@ use App\Models\Remate;
 use App\Models\Race;
 use App\Models\EjemplarRace; // Asegúrate de tener el modelo EjemplarRace
 use App\Models\Ejemplar;
+use Illuminate\Support\Facades\DB;
 
 class RemateController extends Controller
 {
@@ -39,6 +40,7 @@ class RemateController extends Controller
 
     return view('remates.index', compact('remates', 'search', 'raceId', 'races'));
 }
+
 
 
     // Mostrar formulario de creación de remate
@@ -128,25 +130,111 @@ public function validarEjemplar($ejemplar_id)
     }
 }
 
-    public function edit(Remate $remate)
-    {
-        $races = Race::all();
-        return view('remates.edit', compact('remate', 'races'));
+public function edit(Remate $remate)
+{
+    // Filtrar carreras que tengan ejemplares con status 'activar'
+    $races = Race::whereHas('ejemplars', function ($query) {
+        $query->whereHas('ejemplarRaces', function ($query) {
+            $query->where('status', 'activar');
+        });
+    })->get(); // Filtra carreras con ejemplares activos
+
+    // Verificar si se encontraron carreras
+    if ($races->isEmpty()) {
+        return redirect()->route('remates.index')->with('error', 'No hay carreras activas con ejemplares disponibles.');
     }
 
-    public function update(Request $request, Remate $remate)
-    {
-        $request->validate([
-            'number' => 'required|integer',
-            'race_id' => 'required|exists:races,id',
-            'ejemplar_id' => 'required|exists:ejemplars,id|unique:remates,ejemplar_id,' . $remate->id,
-            'cliente' => 'required|string',
-        ]);
+    // Retornar la vista de edición pasando el remate y las carreras
+    return view('remates.edit', compact('remate', 'races'));
+}
 
-        $remate->update($request->all());
 
-        return redirect()->route('remates.index')->with('success', 'Remate actualizado.');
+public function update(Request $request, $id)
+{
+    // Validación de datos
+    $request->validate([
+        'number' => 'required|integer',
+        'race_id' => 'required|exists:races,id',
+        'ejemplar_id' => 'required|exists:ejemplars,id',
+        'cliente' => 'required|string|max:255',
+        'monto1' => 'required|numeric|min:0', // Validar que monto1 sea numérico y mayor o igual a 0
+        'pote' => 'nullable|numeric|min:0' // Pote es opcional pero si se proporciona debe ser numérico y mayor o igual a 0
+    ]);
+
+    // Buscar el remate que se quiere actualizar
+    $remate = Remate::findOrFail($id);
+
+    // Obtener monto1
+    $monto1 = $request->monto1;
+
+    // Asegurar que los valores siempre terminen en 0
+    $monto2 = ceil($monto1 / 2);
+    $monto3 = ceil($monto2 / 2);
+    $monto4 = ceil($monto3 / 2 / 5) * 5;
+
+    // Actualizar el remate con los nuevos datos
+    $remate->update([
+        'number' => $request->number,
+        'race_id' => $request->race_id,
+        'ejemplar_id' => $request->ejemplar_id,
+        'cliente' => $request->cliente,
+        'monto1' => $monto1,
+        'monto2' => $monto2,
+        'monto3' => $monto3,
+        'monto4' => $monto4,
+        'pote' => $request->pote ?? 0 // Si el pote no se proporciona, asignar 0 por defecto
+    ]);
+
+    // Redirigir a una página con éxito
+    return redirect()->route('remates.index')->with('success', 'Remate actualizado correctamente');
+}
+public function actualizarRemate(Request $request)
+{
+    // Validar que los datos necesarios estén presentes
+    $request->validate([
+        'race_id' => 'required|exists:races,id',
+        'totalM1' => 'required|numeric',
+        'totalM2' => 'required|numeric',
+        'totalM3' => 'required|numeric',
+        'totalM4' => 'required|numeric',
+        'totalSubasta' => 'required|numeric',
+        'porcentaje' => 'required|numeric',
+        'pote' => 'nullable|numeric',
+        'totalPagar' => 'required|numeric',
+    ]);
+
+    try {
+        // Iniciar una transacción
+        DB::beginTransaction();
+
+        // Buscar todos los remates para la carrera correspondiente
+        $remates = Remate::where('race_id', $request->race_id)->get();
+
+        foreach ($remates as $remate) {
+            // Actualizar los campos del remate
+            $remate->update([
+                'porcentaje' => $request->porcentaje,
+
+                'total_pagar' => $request->totalPagar,
+                'total_subasta' => $request->totalSubasta,
+                'subasta1' => $request->totalM1,
+                'subasta2' => $request->totalM2,
+                'subasta3' => $request->totalM3,
+                'subasta4' => $request->totalM4,
+            ]);
+        }
+
+        // Confirmar la transacción
+        DB::commit();
+
+        return response()->json(['message' => 'Totales actualizados correctamente']);
+    } catch (\Exception $e) {
+        // Si ocurre algún error, revertir la transacción
+        DB::rollBack();
+        return response()->json(['message' => 'Ocurrió un error al actualizar los totales', 'error' => $e->getMessage()], 500);
     }
+}
+
 
     public function destroy(Remate $remate)
     {
