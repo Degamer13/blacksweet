@@ -1,13 +1,48 @@
-@extends('layouts.admin')
+@extends(Auth::user()->hasRole('ventas') ? 'layouts.app' : 'layouts.admin')
 
 @section('content')
 <style>
-    .table-bordered{
+    /* Estilos generales */
+    .container {
+        margin-top: 30px;
+    }
+
+    .table-bordered {
         border: 5px solid #47bb19;
+    }
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Pestañas activas */
+    .nav-tabs .nav-link.active {
+        background-color: #47bb19;
+        color: white;
+        border-color: #47bb19;
+    }
+
+
+
+    /* Cabecera de la tabla */
+    .table-dark th {
+        background-color: #343a40;
+        color: white;
+    }
+
+    /* Estilos para los totales */
+    tfoot tr th {
+        font-weight: bold;
+    }
+
+    /* Personalización de alertas */
+    .alert {
+        margin-top: 20px;
     }
 </style>
 <div class="container">
-    <h1 class="text-center">Lista de Remates</h1>
+    <h3 class="text-center">Lista de Remates</h3>
 
     <!-- Botón para crear un nuevo remate -->
     <a href="{{ route('remates.create') }}" class="btn btn-primary mb-3">Nuevo Remate</a>
@@ -63,7 +98,7 @@
                         @foreach($remates->where('race_id', $race->id) as $remate)
                         <tr>
                             <td>{{ $remate->number }}</td>
-                            <td>{{ $remate->ejemplar->name }}</td>
+                            <td>{{ $remate->ejemplar_name }}</td>
                             <td class="monto1">{{ $remate->monto1 }}</td>
                             <td class="monto2">{{ $remate->monto2 }}</td>
                             <td class="monto3">{{ $remate->monto3 }}</td>
@@ -72,11 +107,15 @@
                             <td>{{ $remate->total }}</td>
                             <td class="pote">{{ $remate->pote }}</td>
                             <td>
-                                <a href="{{ route('remates.edit', $remate->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                                <a href="{{ route('remates.edit', $remate->id) }}" class="btn btn-primary "><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
+                                    <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001"/>
+                                  </svg></a>
 
                                 <form action="{{ route('remates.destroy', $remate) }}" method="POST" style="display:inline;">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar este remate?')">Eliminar</button>
+                                    <button type="submit" class="btn btn-danger"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                      </svg></button>
                                 </form>
                             </td>
                         </tr>

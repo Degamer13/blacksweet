@@ -1,31 +1,20 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\{
     HomeController,
     AdminHomeController,
     RaceController,
-    EjemplarController,
     RemateController,
     EjemplarRaceController,
-    GacetaController
+    GacetaController,
+    UserController,
+    RoleController,
+    PermissionController
 };
-use App\Models\Ejemplar; // Asegúrate de importar el modelo Ejemplar
 
-/*
-|---------------------------------------------------------------------------
-| Web Routes
-|---------------------------------------------------------------------------
-| Aquí es donde puedes registrar las rutas web para tu aplicación.
-| Las rutas se cargan mediante el RouteServiceProvider y todas ellas serán
-| asignadas al grupo de middleware "web".
-|
-*/
-
-// Login
+// Página de bienvenida
 Route::get('/', function () {
     return view("welcome");
 });
@@ -33,30 +22,40 @@ Route::get('/', function () {
 // Rutas de autenticación
 Auth::routes();
 
-// Ruta del panel principal
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+// Redirección después del login según el rol
+Route::get('/redirect', function () {
+    $user = Auth::user();
 
-// Ruta para la vista adminhome con el controlador
+    if (!$user) {
+        return redirect()->route('home');
+    }
+
+    // Si el usuario es admin, lo redirige a adminhome
+    if ($user->hasRole('admin')) {
+        return redirect()->route('adminhome');
+    }
+
+    // Cualquier otro rol lo envía a home
+    return redirect()->route('home');
+})->middleware('auth');
+
+// Rutas principales
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/panel-admin', [AdminHomeController::class, 'index'])->name('adminhome');
 
-// Rutas protegidas para el sistema de inventario
+// Rutas protegidas
 Route::middleware(['auth'])->group(function () {
     Route::resources([
         'users' => UserController::class,
         'roles' => RoleController::class,
         'permissions' => PermissionController::class,
         'races' => RaceController::class,
-        'ejemplars' => EjemplarController::class,
         'remates' => RemateController::class,
         'parametros' => EjemplarRaceController::class,
-        'gacetas'=>GacetaController::class
+        'gacetas' => GacetaController::class
     ]);
 
-  // Ruta para obtener los ejemplares de una carrera
-    Route::get('/ejemplares/{race_id}', [RemateController::class, 'getEjemplarsByRace'])->name('ejemplares.byRace');
-    Route::get('/validar-ejemplar/{ejemplar_id}', [RemateController::class, 'validarEjemplar']);
-    Route::get('/validar-ejemplar/nombre/{name}', [EjemplarController::class, 'validarEjemplar'])
-    ->where('name', '.*'); // Permite nombres con espacios y caracteres especiales
+    Route::get('/ejemplares/{raceId}', [RemateController::class, 'getEjemplarsByRace']);
+    Route::get('/validar-ejemplar/{ejemplarId}', [RemateController::class, 'validarEjemplar']);
     Route::post('remates/actualizar', [RemateController::class, 'actualizarRemate'])->name('remates.actualizarRemate');
-
 });

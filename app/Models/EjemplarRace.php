@@ -11,15 +11,11 @@ class EjemplarRace extends Model
 
     protected $table = 'ejemplar_race';
 
-    protected $fillable = ['race_id', 'ejemplar_id', 'status'];
+    protected $fillable = ['race_id', 'ejemplar_name', 'status'];
 
     public function race()
     {
         return $this->belongsTo(Race::class);
     }
 
-    public function ejemplar()
-    {
-        return $this->belongsTo(Ejemplar::class);
-    }
 }

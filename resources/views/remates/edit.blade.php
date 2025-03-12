@@ -18,24 +18,23 @@
                 <select name="race_id" id="race_id" class="form-control" required>
                     <option value="">Seleccione una Carrera</option>
                     @foreach($races as $race)
-                        <option value="{{ $race->id }}" {{ old('race_id', $remate->race_id) == $race->id ? 'selected' : '' }}>{{ $race->name }}</option>
+                        <option value="{{ $race->id }}" {{ $remate->race_id == $race->id ? 'selected' : '' }}>
+                            {{ $race->name }}
+                        </option>
                     @endforeach
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="ejemplar_id">Seleccionar Ejemplar:</label>
-                <select name="ejemplar_id" id="ejemplar_id" class="form-control" required>
+                <label for="ejemplar_name">Seleccionar Ejemplar:</label>
+                <select name="ejemplar_name" id="ejemplar_name" class="form-control" required>
                     <option value="">Seleccione un Ejemplar</option>
-                    @if($remate->race->ejemplars->isNotEmpty())
-                        @foreach($remate->race->ejemplars as $ejemplar)
-                            <option value="{{ $ejemplar->id }}" {{ old('ejemplar_id', $remate->ejemplar_id) == $ejemplar->id ? 'selected' : '' }}>{{ $ejemplar->name }}</option>
-                        @endforeach
-                    @else
-                        <option value="">No hay ejemplares disponibles</option>
-                    @endif
+                    @foreach($remate->race->ejemplarRaces as $ejemplar)
+                        <option value="{{ $ejemplar->ejemplar_name }}" {{ $remate->ejemplar_name == $ejemplar->ejemplar_name ? 'selected' : '' }}>
+                            {{ $ejemplar->ejemplar_name }}
+                        </option>
+                    @endforeach
                 </select>
-                <span id="mensaje-validacion" style="font-weight: bold;"></span>
             </div>
 
             <div class="form-group">
@@ -65,7 +64,7 @@
 
             <div class="form-group">
                 <label for="pote">Pote:</label>
-                <input type="number" class="form-control" name="pote" id="pote" value="{{ old('pote', $remate->pote) }}">
+                <input type="number" required class="form-control" name="pote" id="pote" value="{{ old('pote', $remate->pote) }}">
             </div>
 
             <button type="submit" class="btn btn-primary">Actualizar</button>
@@ -75,7 +74,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Cargar los ejemplares en función de la carrera seleccionada
+            // Cargar ejemplares cuando se selecciona una carrera
             $('#race_id').change(function () {
                 let raceId = $(this).val();
                 if (raceId) {
@@ -83,40 +82,21 @@
                         url: `/ejemplares/${raceId}`,
                         type: 'GET',
                         success: function (data) {
-                            $('#ejemplar_id').html('<option value="">Seleccione un Ejemplar</option>');
+                            $('#ejemplar_name').html('<option value="">Seleccione un Ejemplar</option>');
                             data.forEach(function (ejemplar) {
-                                $('#ejemplar_id').append(`<option value="${ejemplar.id}" ${ejemplar.id == "{{ old('ejemplar_id', $remate->ejemplar_id) }}" ? 'selected' : ''}>${ejemplar.name}</option>`);
+                                $('#ejemplar_name').append(`<option value="${ejemplar.ejemplar_name}">${ejemplar.ejemplar_name}</option>`);
                             });
                         }
                     });
                 } else {
-                    $('#ejemplar_id').html('<option value="">Seleccione un Ejemplar</option>');
-                }
-            });
-
-            // Validar si el ejemplar ya está registrado
-            $('#ejemplar_id').change(function () {
-                let ejemplar_id = $(this).val();
-                if (ejemplar_id) {
-                    $.ajax({
-                        url: `/validar-ejemplar/${ejemplar_id}`,
-                        type: 'GET',
-                        success: function (response) {
-                            $('#mensaje-validacion').text(response.message).css('color', 'green');
-                        },
-                        error: function (xhr) {
-                            $('#mensaje-validacion').text(xhr.responseJSON.message).css('color', 'red');
-                        }
-                    });
-                } else {
-                    $('#mensaje-validacion').text('');
+                    $('#ejemplar_name').html('<option value="">Seleccione un Ejemplar</option>');
                 }
             });
 
             // Calcular montos automáticamente
             $('#monto1').on('input', function () {
                 let monto1 = parseFloat($(this).val());
-                if (!isNaN(monto1)) {
+                if (!isNaN(monto1) && monto1 > 0) {
                     let monto2 = Math.ceil((monto1 / 2));
                     let monto3 = Math.ceil((monto2 / 2));
                     let monto4 = Math.ceil((monto3 / 2) / 5) * 5;
@@ -125,7 +105,6 @@
                     $('#monto3').val(monto3);
                     $('#monto4').val(monto4);
                 } else {
-                    // Si monto1 no es un número, vaciar los montos dependientes
                     $('#monto2').val('');
                     $('#monto3').val('');
                     $('#monto4').val('');
@@ -134,4 +113,3 @@
         });
     </script>
 @endsection
-

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +11,7 @@ class Race extends Model
     // Definir los campos que son asignables en masa
     protected $fillable = ['name'];
 
-    // Relación con EjemplarRace
+    // Relación con EjemplarRace (tabla intermedia)
     public function ejemplarRaces()
     {
         return $this->hasMany(EjemplarRace::class, 'race_id');
@@ -22,20 +21,8 @@ class Race extends Model
     protected static function booted()
     {
         static::deleting(function ($race) {
-            // Eliminar todos los ejemplares asociados cuando se elimina la carrera
+            // Eliminar todos los registros de ejemplar_race asociados cuando se elimina la carrera
             $race->ejemplarRaces()->delete();
         });
-    }
-       // Relación con Ejemplar a través de la tabla ejemplar_race
-    public function ejemplars()
-    {
-        return $this->hasManyThrough(
-            Ejemplar::class,   // Modelo relacionado
-            EjemplarRace::class, // Modelo intermedio
-            'race_id',          // Clave foránea en la tabla intermedia
-            'id',               // Clave primaria en la tabla ejemplar
-            'id',               // Clave primaria en la tabla carreras
-            'ejemplar_id'       // Clave foránea en la tabla intermedia
-        );
     }
 }

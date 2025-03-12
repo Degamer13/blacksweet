@@ -11,7 +11,7 @@ class CreateEjemplarRaceTable extends Migration
         Schema::create('ejemplar_race', function (Blueprint $table) {
             $table->id();
             $table->foreignId('race_id')->constrained()->onDelete('cascade');
-            $table->foreignId('ejemplar_id')->constrained('ejemplars')->onDelete('cascade'); // Corregido a singular
+            $table->string('ejemplar_name');
             $table->enum('status', ['activar', 'desactivar'])->default('desactivar');
             $table->timestamps();
         });

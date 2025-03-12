@@ -41,7 +41,7 @@
     </tr>
 @foreach ($races as $race)
     <tr>
-        <td>{{ $race->id }}</td>
+
         <td>{{ $race->name }}</td>
 
         <td class="text-center">

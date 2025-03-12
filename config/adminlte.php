@@ -358,12 +358,7 @@ return [
                     'icon' => 'fas fa-dollar-sign',
                     'can' => 'race-list',  // Verificar si el usuario tiene el permiso 'dolar-list'
                 ],
-                [
-                    'text' => 'Ejemplares',
-                    'url' => 'ejemplars',
-                    'icon' => 'fas fa-th-list',
-                    'can' => 'ejemplar-list',  // Verificar si el usuario tiene el permiso 'categoria-list'
-                ],
+
                 [
                     'text' => 'Parametros para Remates',
                     'url' => 'parametros',

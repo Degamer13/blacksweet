@@ -19,22 +19,22 @@
         </div>
 
         <div class="form-group">
-            <label for="ejemplars">Ejemplares</label>
-            <select name="ejemplars[]" class="form-control" multiple required>
-                @foreach($ejemplars as $ejemplar)
-                    <option value="{{ $ejemplar->id }}" 
-                        @if(in_array($ejemplar->id, $selectedEjemplars)) selected @endif>
-                        {{ $ejemplar->name }}
-                    </option>
-                @endforeach
-            </select>
+            <label for="ejemplar_name">Ejemplares</label>
+            @foreach($ejemplars as $ejemplar)
+                <div class="d-flex mb-2">
+                    <!-- Campo para editar el nombre del ejemplar -->
+                    <input type="text" name="ejemplar_name[{{ $ejemplar->id }}]" class="form-control"
+                           value="{{ old('ejemplar_name.' . $ejemplar->id, $ejemplar->ejemplar_name) }}" required>
+                    <input type="hidden" name="ejemplar_id[]" value="{{ $ejemplar->id }}">
+                </div>
+            @endforeach
         </div>
 
         <div class="form-group">
             <label for="status">Estado</label>
             <select name="status" class="form-control" required>
-                <option value="activar" {{ $status == 'activar' ? 'selected' : '' }}>Activar</option>
-                <option value="desactivar" {{ $status == 'desactivar' ? 'selected' : '' }}>Desactivar</option>
+                <option value="activar" {{ old('status', $status) == 'activar' ? 'selected' : '' }}>Activar</option>
+                <option value="desactivar" {{ old('status', $status) == 'desactivar' ? 'selected' : '' }}>Desactivar</option>
             </select>
         </div>
 

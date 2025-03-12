@@ -23,8 +23,8 @@
             </div>
 
             <div class="form-group">
-                <label for="ejemplar_id">Seleccionar Ejemplar:</label>
-                <select name="ejemplar_id" id="ejemplar_id" class="form-control" required>
+                <label for="ejemplar_name">Seleccionar Ejemplar:</label>
+                <select name="ejemplar_name" id="ejemplar_name" class="form-control" required>
                     <option value="">Seleccione un Ejemplar</option>
                 </select>
                 <span id="mensaje-validacion" style="font-weight: bold;"></span>
@@ -57,13 +57,17 @@
 
             <div class="form-group">
                 <label for="pote">Pote:</label>
-                <input type="number" class="form-control" name="pote" id="pote">
+                <input type="number" required class="form-control" name="pote" id="pote">
             </div>
 
             <button type="submit" class="btn btn-primary">Registrar</button>
-
         </form>
     </div>
+<!-- Incluir el CSS de Select2 -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+<!-- Incluir el JS de Select2 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -76,23 +80,23 @@
                         url: `/ejemplares/${raceId}`,
                         type: 'GET',
                         success: function (data) {
-                            $('#ejemplar_id').html('<option value="">Seleccione un Ejemplar</option>');
+                            $('#ejemplar_name').html('<option value="">Seleccione un Ejemplar</option>');
                             data.forEach(function (ejemplar) {
-                                $('#ejemplar_id').append(`<option value="${ejemplar.id}">${ejemplar.name}</option>`);
+                                $('#ejemplar_name').append(`<option value="${ejemplar.name}">${ejemplar.name}</option>`);
                             });
                         }
                     });
                 } else {
-                    $('#ejemplar_id').html('<option value="">Seleccione un Ejemplar</option>');
+                    $('#ejemplar_name').html('<option value="">Seleccione un Ejemplar</option>');
                 }
             });
 
             // Validar si el ejemplar ya está registrado
-            $('#ejemplar_id').change(function () {
-                let ejemplar_id = $(this).val();
-                if (ejemplar_id) {
+            $('#ejemplar_name').change(function () {
+                let ejemplar_name = $(this).val();
+                if (ejemplar_name) {
                     $.ajax({
-                        url: `/validar-ejemplar/${ejemplar_id}`,
+                        url: `/validar-ejemplar/${ejemplar_name}`,
                         type: 'GET',
                         success: function (response) {
                             $('#mensaje-validacion').text(response.message).css('color', 'green');
@@ -109,14 +113,18 @@
             // Calcular montos automáticamente
             $('#monto1').on('input', function () {
                 let monto1 = parseFloat($(this).val());
-                if (!isNaN(monto1)) {
+                if (!isNaN(monto1) && monto1 > 0) {
                     let monto2 = Math.ceil((monto1 / 2));
-                    let monto3 = Math.ceil((monto2 / 2) );
+                    let monto3 = Math.ceil((monto2 / 2));
                     let monto4 = Math.ceil((monto3 / 2) / 5) * 5;
 
                     $('#monto2').val(monto2);
                     $('#monto3').val(monto3);
                     $('#monto4').val(monto4);
+                } else {
+                    $('#monto2').val('');
+                    $('#monto3').val('');
+                    $('#monto4').val('');
                 }
             });
         });

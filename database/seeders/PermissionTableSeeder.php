@@ -34,6 +34,8 @@
         'permission-delete',
         'remate-list',
         'remate-show',
+        'remate-search',
+        'remate-total',
         'remate-create',
         'remate-edit',
         'remate-delete',
@@ -48,11 +50,6 @@
         'parametro-create',
         'parametro-edit',
         'parametro-delete',
-        'ejemplar-list',
-        'ejemplar-show',
-        'ejemplar-create',
-        'ejemplar-edit',
-        'ejemplar-delete',
         'porcentaje-show',
         'pote-show'
 

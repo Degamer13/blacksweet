@@ -1,24 +1,24 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\EjemplarRace;
 use App\Models\Race;
-use App\Models\Ejemplar;
 
 class EjemplarRaceController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:parametro-list|parametro-create|parametro-edit|parametro-delete', ['only' => ['index','store']]);
-        $this->middleware('permission:parametro-create', ['only' => ['create','store']]);
-        $this->middleware('permission:parametro-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:parametro-list|parametro-create|parametro-edit|parametro-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:parametro-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:parametro-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:parametro-delete', ['only' => ['destroy']]);
     }
+
     public function index(Request $request)
     {
         $search = $request->input('search');
-
         $races = Race::whereHas('ejemplarRaces')
             ->when($search, function ($query, $search) {
                 return $query->where('name', 'LIKE', "%{$search}%");
@@ -31,133 +31,95 @@ class EjemplarRaceController extends Controller
     public function create()
     {
         $races = Race::all();
-        $ejemplars = Ejemplar::all();
-
-        return view('parametros.create', compact('races', 'ejemplars'));
+        return view('parametros.create', compact('races'));
     }
-public function store(Request $request)
+
+    public function store(Request $request)
 {
-    // Validación de las carreras y ejemplares
     $request->validate([
         'race_id' => 'required|array',
-        'race_id.*' => 'exists:races,id',  // Asegúrate de que las carreras existan
-        'ejemplars' => 'required|array',
-        'ejemplars.*' => 'exists:ejemplars,id',  // Asegúrate de que los ejemplares existan
+        'race_id.*' => 'exists:races,id',
+        'ejemplar_name' => 'required|array',
+        'ejemplar_name.*' => 'required|array', // Asegura que cada índice sea un array
+        'ejemplar_name.*.*' => 'required|string|max:255' // Valida cada ejemplar individualmente
     ]);
 
-    // Recorremos las carreras seleccionadas
-    foreach ($request->race_id as $index => $raceIds) {
-        // Recorremos los ejemplares seleccionados para cada carrera
-        foreach ($request->ejemplars[$index] as $ejemplar_id) {
-            // Crear la relación entre carrera y ejemplar con el status 'desactivado'
-            EjemplarRace::create([
-                'race_id' => $raceIds[0],  // Usamos el primer race_id, ya que puedes seleccionar solo uno por carrera
-                'ejemplar_id' => $ejemplar_id,
-                'status' => 'desactivar',  // Asignamos el estado desactivado por defecto
-            ]);
+    try {
+        foreach ($request->race_id as $index => $raceId) {
+            if (!isset($request->ejemplar_name[$index])) {
+                continue; // Evita errores si no hay ejemplares para este índice
+            }
+
+            foreach ($request->ejemplar_name[$index] as $ejemplarName) {
+                EjemplarRace::create([
+                    'race_id' => $raceId,
+                    'ejemplar_name' => $ejemplarName,
+                    'status' => 'desactivar',
+                ]);
+            }
         }
+        return redirect()->route('parametros.index')->with('success', 'Registros guardados correctamente.');
+    } catch (\Exception $e) {
+        return back()->with('error', 'Error al guardar: ' . $e->getMessage());
     }
-
-    // Redirigimos al listado de carreras con un mensaje de éxito
-    return redirect()->route('parametros.index')->with('success', 'Relaciones de carreras y ejemplares registradas correctamente.');
 }
-
-
 
     public function show($race_id)
     {
         $race = Race::findOrFail($race_id);
-        $ejemplars = EjemplarRace::where('race_id', $race_id)->with('ejemplar')->get();
-
-        return view('parametros.show', compact('race', 'ejemplars'));
-    }
-   // Actualizar la relación de ejemplares y carreras en masa
-// Método editMass
-public function edit($race_id)
-{
-    // Obtener la carrera y los ejemplares asociados
-    $race = Race::findOrFail($race_id);
-    $races = Race::all(); // Todas las carreras para la selección
-    $ejemplars = Ejemplar::all(); // Todos los ejemplares para la selección
-
-    // Obtener los ejemplares que ya están asociados con esta carrera
-    $selectedEjemplars = EjemplarRace::where('race_id', $race_id)->pluck('ejemplar_id')->toArray();
-
-    // Obtener el estado actual de las relaciones de los ejemplares con la carrera
-    $status = EjemplarRace::where('race_id', $race_id)
-                ->whereIn('ejemplar_id', $selectedEjemplars)
-                ->first()
-                ->status ?? 'desactivar'; // Si no hay relación, asignar "desactivado"
-
-    return view('parametros.edit', compact('race', 'races', 'ejemplars', 'selectedEjemplars', 'status'));
-}
-
-
-    // Actualizar las relaciones de carrera-ejemplar en masa
-  public function update(Request $request, $id)
-{
-    // Validación de los datos
-    $request->validate([
-        'race_id' => 'required|exists:races,id',  // Validar que el race_id exista
-        'ejemplars' => 'required|array',  // Aseguramos que haya ejemplares
-        'ejemplars.*' => 'exists:ejemplars,id',  // Validar que los ejemplares existan
-        'status' => 'required|in:activar,desactivar',  // Validar el status
-    ]);
-
-    // Obtener la carrera
-    $race = Race::findOrFail($id);
-
-    // Eliminar relaciones existentes
-    EjemplarRace::where('race_id', $id)->delete();
-
-    // Crear nuevas relaciones
-    foreach ($request->ejemplars as $ejemplar_id) {
-        EjemplarRace::create([
-            'race_id' => $request->race_id,
-            'ejemplar_id' => $ejemplar_id,
-            'status' => $request->status,  // El status se asigna desde la vista
-        ]);
+        return view('parametros.show', compact('race'));
     }
 
-    // Redirigir al listado de carreras con mensaje de éxito
-    return redirect()->route('parametros.index')->with('success', 'Carrera y ejemplares actualizados correctamente.');
-}
-
-   /* public function edit($id)
+    public function edit($race_id)
     {
-        $ejemplarRace = EjemplarRace::findOrFail($id);
+        // Buscar la carrera
+        $race = Race::findOrFail($race_id);
+
+        // Obtener todas las carreras
         $races = Race::all();
-        $ejemplars = Ejemplar::whereHas('ejemplarRaces', function ($query) use ($ejemplarRace) {
-            $query->where('race_id', $ejemplarRace->race_id);
-        })->get();
 
-        return view('parametros.edit', compact('ejemplarRace', 'races', 'ejemplars'));
+        // Obtener los ejemplares relacionados con esta carrera
+        $ejemplars = EjemplarRace::where('race_id', $race_id)->get(); // Traemos todos los ejemplares relacionados
+
+        // Obtener el estado de los ejemplares relacionados con la carrera
+        $status = $ejemplars->first()->status ?? 'desactivar'; // Asumimos que todos los ejemplares tienen el mismo estado
+
+        return view('parametros.edit', compact('race', 'races', 'ejemplars', 'status'));
     }
 
-    public function update(Request $request, $id)
+
+
+
+    public function update(Request $request, $race_id)
     {
+        // Validar los datos del formulario
         $request->validate([
             'race_id' => 'required|exists:races,id',
-            'ejemplar_id' => 'required|exists:ejemplars,id',
-            'status' => 'required|in:activo,desactivado',
+            'ejemplar_name' => 'required|array', // Validar que ejemplar_name sea un arreglo
+            'ejemplar_name.*' => 'required|string', // Validar que los nombres de los ejemplares sean cadenas
+            'status' => 'required|in:activar,desactivar',
         ]);
 
-        $ejemplarRace = EjemplarRace::findOrFail($id);
-        $ejemplarRace->update([
-            'race_id' => $request->race_id,
-            'ejemplar_id' => $request->ejemplar_id,
-            'status' => $request->status,
-        ]);
+        // Desactivar los ejemplares previos de la carrera
+        EjemplarRace::where('race_id', $race_id)->update(['status' => 'desactivar']);
 
-        return redirect()->route('parametros.index')->with('success', 'Relación carrera-ejemplar actualizada correctamente.');
-    }*/
-public function destroy($id)
-{
-    // Obtener la carrera con el id
-    $race = Race::findOrFail($id);
+        // Luego, actualizar o crear los ejemplares seleccionados
+        foreach ($request->ejemplar_name as $ejemplarId => $ejemplarName) {
+            // Actualizar o crear el ejemplar
+            EjemplarRace::updateOrCreate(
+                ['race_id' => $race_id, 'id' => $ejemplarId], // Buscar por el ID del ejemplar
+                ['ejemplar_name' => $ejemplarName, 'status' => $request->status] // Actualizar el nombre y el estado
+            );
+        }
 
-    // Eliminar todas las relaciones en la tabla intermedia ejemplar_race para esa carrera
-    $race->ejemplarRaces()->delete();
+        return redirect()->route('parametros.index')->with('success', 'Actualización exitosa.');
+    }
 
-    return redirect()->route('parametros.index')->with('success', 'Relaciones de ejemplares eliminadas correctamente.');
-}}
+
+    public function destroy($race_id)
+    {
+        EjemplarRace::where('race_id', $race_id)->delete();
+
+        return redirect()->route('parametros.index')->with('success', 'Relaciones eliminadas correctamente.');
+    }
+}

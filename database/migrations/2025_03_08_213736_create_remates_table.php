@@ -12,8 +12,7 @@ return new class extends Migration {
 
             // Claves foráneas separadas
             $table->unsignedBigInteger('race_id');
-            $table->unsignedBigInteger('ejemplar_id');
-
+            $table->string('ejemplar_name');
             $table->string('cliente');
             $table->decimal('monto1', 10, 2);
             $table->decimal('monto2', 10, 2);
@@ -35,7 +34,7 @@ return new class extends Migration {
 
             // Relaciones con 'races' y 'ejemplars'
             $table->foreign('race_id')->references('id')->on('races')->onDelete('cascade');
-            $table->foreign('ejemplar_id')->references('id')->on('ejemplars')->onDelete('cascade');
+
         });
     }
 
