@@ -13,7 +13,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
+        
                     <th>Nombre del Ejemplar</th>
                     <th>Status</th>
                 </tr>
@@ -21,7 +21,7 @@
             <tbody>
                 @foreach($race->ejemplarRaces as $ejemplarRace)
                     <tr>
-                        <td>{{ $ejemplarRace->id }}</td>
+                        
                         <td>{{ $ejemplarRace->ejemplar_name }}</td>
                         <td>{{ $ejemplarRace->status == 'activar' ? 'Activo' : 'Desactivado' }}</td>
                     </tr>

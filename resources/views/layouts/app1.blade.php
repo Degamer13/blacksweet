@@ -13,61 +13,38 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CSS de Bootstrap desde CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- CSS personalizado -->
+    <!-- CSS compilado desde SCSS -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    <!-- Bootstrap 5.3 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    
 
-    <!-- JS personalizado -->
+    <!-- JS -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .navbar {
-            padding: 15px;
-        }
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .navbar-dark .navbar-nav .nav-link {
-            color: #fff;
-            transition: 0.3s;
-        }
-        .navbar-dark .navbar-nav .nav-link:hover {
-            color: #f8d210;
-        }
-        .dropdown-menu {
-            border-radius: 8px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        main {
-            padding: 20px;
-        }
-    </style>
+    <!-- Scripts
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])-->
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
             <div class="container">
+                <!-- Nombre de la aplicación -->
                 <a class="navbar-brand" href="{{ url('/home') }}">
                     {{ config('app.name', 'Control de Inventario') }}
                 </a>
 
+                <!-- Botón de hamburguesa para pantallas pequeñas -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
+                <!-- Contenido del menú colapsable -->
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Enlaces de navegación agrupados en el menú de hamburguesa -->
                     <ul class="navbar-nav me-auto">
                         @can('remate-list')
                             <li class="nav-item">
@@ -89,13 +66,14 @@
                                 <a class="nav-link" href="{{ route('precios.index') }}">Precio del Dólar</a>
                             </li>
                         @endcan
-                        @can('total-venta')
+                         @can('total-venta')
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('totales.index') }}">Total de Ventas</a>
                             </li>
                         @endcan
                     </ul>
 
+                    <!-- Enlaces de autenticación y opciones del usuario -->
                     <ul class="navbar-nav ms-auto">
                         @guest
                             @if (Route::has('login'))
@@ -108,20 +86,20 @@
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     @can('show-admin')
-                                        <li><a class="dropdown-item" href="{{ route('adminhome') }}">{{ __('Vista de Administrador') }}</a></li>
-                                    @endcan
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            {{ __('Logout') }}
+                                        <a class="dropdown-item" href="{{ route('adminhome') }}">
+                                            {{ __('Vista de Administrador') }}
                                         </a>
-                                    </li>
+                                    @endcan
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
-                                </ul>
+                                </div>
                             </li>
                         @endguest
                     </ul>
@@ -129,7 +107,7 @@
             </div>
         </nav>
 
-        <main class="container bg-white shadow rounded p-4">
+        <main class="py-4">
             @yield('content')
         </main>
     </div>

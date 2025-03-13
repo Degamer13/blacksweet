@@ -27,6 +27,23 @@ class EjemplarRaceController extends Controller
 
         return view('parametros.index', compact('races', 'search'));
     }
+    public function toggleStatus($race_id)
+{
+    $race = Race::findOrFail($race_id);
+    
+    // Verifica si hay ejemplares activos en la carrera
+    $hasActiveEjemplars = $race->ejemplarRaces()->where('status', 'activar')->exists();
+
+    if ($hasActiveEjemplars) {
+        // Si hay ejemplares activos, desactívalos todos
+        $race->ejemplarRaces()->update(['status' => 'desactivar']);
+    } else {
+        // Si están desactivados, actívalos todos
+        $race->ejemplarRaces()->update(['status' => 'activar']);
+    }
+
+    return redirect()->route('parametros.index')->with('success', 'Estado actualizado correctamente.');
+}
 
     public function create()
     {

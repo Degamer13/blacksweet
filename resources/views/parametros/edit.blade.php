@@ -29,14 +29,8 @@
                 </div>
             @endforeach
         </div>
+        <input type="hidden" name="status" value="{{ old('status', $status) }}">
 
-        <div class="form-group">
-            <label for="status">Estado</label>
-            <select name="status" class="form-control" required>
-                <option value="activar" {{ old('status', $status) == 'activar' ? 'selected' : '' }}>Activar</option>
-                <option value="desactivar" {{ old('status', $status) == 'desactivar' ? 'selected' : '' }}>Desactivar</option>
-            </select>
-        </div>
 
         <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
     </form>

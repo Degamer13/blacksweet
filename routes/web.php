@@ -58,4 +58,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/ejemplares/{raceId}', [RemateController::class, 'getEjemplarsByRace']);
     Route::get('/validar-ejemplar/{ejemplarId}', [RemateController::class, 'validarEjemplar']);
     Route::post('remates/actualizar', [RemateController::class, 'actualizarRemate'])->name('remates.actualizarRemate');
+    Route::patch('/parametros/{id}/toggle-status', [EjemplarRaceController::class, 'toggleStatus'])->name('parametros.toggleStatus');
+    Route::get('/registro_remates', [RemateController::class, 'listarRemates'])->name('remates.lista_remates');
 });

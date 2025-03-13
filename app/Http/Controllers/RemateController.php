@@ -12,96 +12,78 @@ class RemateController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $raceId = $request->input('race_id'); // Captura el filtro por carrera
+        // Obtener los ejemplares agrupados por race_id donde el status sea 'activar'
+        $ejemplares = DB::table('ejemplar_race')
+            ->select('race_id', 'ejemplar_name', 'status')  // Seleccionamos race_id, ejemplar_name y status
+            ->where('status', 'activar')  // Filtrar solo los que tengan el status 'activar'
+            ->get()
+            ->groupBy('race_id');  // Agrupar por race_id
 
-        // Obtener las carreras que tienen ejemplares asociados desde la tabla ejemplar_race
-        $races = DB::table('ejemplar_race')
-            ->join('races', 'ejemplar_race.race_id', '=', 'races.id')
-            ->select('races.id', 'races.name') // Obtén el id y nombre de la carrera
-            ->groupBy('races.id', 'races.name')
-            ->get();
-
-        // Consulta base de remates con filtro opcional de carrera
-        $query = Remate::query();
-
-        if ($raceId) {
-            $query->where('race_id', $raceId);
-        }
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('race', function ($query) use ($search) {
-                    $query->where('name', 'like', "%$search%");
-                })->orWhereHas('ejemplarRace', function ($query) use ($search) {
-                    $query->where('ejemplar_name', 'like', "%$search%");
-                });
-            });
-        }
-
-        $remates = $query->paginate(10);
-
-        return view('remates.index', compact('remates', 'search', 'raceId', 'races'));
+        // Pasar los ejemplares a la vista
+        return view('remates.index', compact('ejemplares'));
     }
-
-
-
-    // Mostrar formulario de creación de remate
-    public function create()
-{
-    // Obtener carreras con ejemplares activos asociados desde la tabla ejemplar_race
-    $races = Race::whereHas('ejemplarRaces', function ($query) {
-        $query->where('status', 'activar'); // Filtra solo los ejemplares activos
-    })->get();
-
-    return view('remates.create', compact('races'));
-}
-
-
+    public function listarRemates()
+    {
+        // Obtener todos los remates para la vista
+        $remates = Remate::latest()->paginate(10);
+    
+        return view('remates.lista_remates', compact('remates'));
+    }
     // Guardar un nuevo remate
     public function store(Request $request)
     {
-        // Validación de datos
+        // Validar datos recibidos
         $request->validate([
-            'number' => 'required|integer',
-            'race_id' => 'required|exists:races,id',
-            'ejemplar_name' => 'required|string|max:255',
-            'cliente' => 'required|string|max:255',
-            'monto1' => 'required|numeric',
-            'pote' => 'nullable|numeric'
+            'race_id'        => 'required|array',
+            'ejemplar_name'  => 'required|array',
+            'cliente'        => 'required|array',
+            'monto1'         => 'required|array',
+            'monto2'         => 'required|array',
+            'monto3'         => 'required|array',
+            'monto4'         => 'required|array',
+            'total'          => 'required|array',
+            'pote'           => 'required|array',
         ]);
-
-        // Calcular montos automáticamente
-        $monto1 = $request->monto1;
-        $monto2 = ceil($monto1 / 2);
-        $monto3 = ceil($monto2 / 2);
-        $monto4 = ceil($monto3 / 2 / 5) * 5;
-
-        $total = $monto1 + $monto2 + $monto3 + $monto4;
-
-        // Crear remate
-        Remate::create([
-            'number' => $request->number,
-            'race_id' => $request->race_id,
-            'ejemplar_name' => $request->ejemplar_name, // Usar ejemplar_name
-            'cliente' => $request->cliente,
-            'monto1' => $monto1,
-            'monto2' => $monto2,
-            'monto3' => $monto3,
-            'monto4' => $monto4,
-            'total' => $total,
-            'porcentaje' => 0,
-            'pote' => $request->pote ?? 0,
-            'total_pagar' => 0,
-            'total_subasta' => 0,
-            'subasta1' => 0,
-            'subasta2' => 0,
-            'subasta3' => 0,
-            'subasta4' => 0
-        ]);
-
-        return redirect()->route('remates.index')->with('success', 'Remate registrado con éxito');
+    
+        // Calcular los totales globales
+        $total_subasta = array_sum($request->total);
+        $porcentaje = $total_subasta * 0.30;
+        $total_pagar = ($total_subasta - $porcentaje) + max($request->pote);
+        
+        // Calcular los totales de cada subasta
+        $subasta1 = array_sum($request->monto1);
+        $subasta2 = array_sum($request->monto2);
+        $subasta3 = array_sum($request->monto3);
+        $subasta4 = array_sum($request->monto4);
+    
+        // Iterar cada fila enviada y guardar un remate
+        foreach ($request->race_id as $index => $race_id) {
+            Remate::create([
+                'number'         => $index + 1, // o algún otro criterio para el número
+                'race_id'        => $race_id,
+                'ejemplar_name'  => $request->ejemplar_name[$index],
+                'cliente'        => $request->cliente[$index],
+                'monto1'         => $request->monto1[$index],
+                'monto2'         => $request->monto2[$index],
+                'monto3'         => $request->monto3[$index],
+                'monto4'         => $request->monto4[$index],
+                'total'          => $request->total[$index],
+                'pote'           => $request->pote[$index],
+                // Totales globales
+                'total_subasta'  => $total_subasta,
+                'porcentaje'     => $porcentaje,
+                'total_pagar'    => $total_pagar,
+                // Totales individuales de subastas
+                'subasta1'       => $subasta1,
+                'subasta2'       => $subasta2,
+                'subasta3'       => $subasta3,
+                'subasta4'       => $subasta4,
+            ]);
+        }
+    
+        return redirect()->route('remates.index')->with('success', 'subasta_finalizada');
     }
+    
   // Cargar los ejemplares activos de la carrera
   public function getEjemplarsByRace($raceId)
   {

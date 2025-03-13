@@ -346,10 +346,10 @@ return [
             'can' => 'permission-list',  // Verificar si el usuario tiene el permiso 'permission-list'
         ],
         [
-            'header' => 'Control de Remates',
+            'header' => 'Parametros Para Remates',
         ],
         [
-            'text' => 'Registros',
+            'text' => 'Registro',
             'icon' => 'fas fa-fw fa-folder',
             'submenu' => [
                 [
@@ -360,11 +360,30 @@ return [
                 ],
 
                 [
-                    'text' => 'Parametros para Remates',
+                    'text' => 'Registro de Caballos para Remates',
                     'url' => 'parametros',
                     'icon' => 'fas fa-user-tie',
                     'can' => 'parametro-list',  // Verificar si el usuario tiene el permiso 'cliente-list'
                 ],
+               
+                [
+                    /*'text' => 'Gacetas',
+                    'url' => '#',
+                    'icon' => 'fas fa-boxes',
+                    'can' => 'producto-list',  // Verificar si el usuario tiene el permiso 'producto-list'*/
+                ],
+               
+             
+
+
+            ],
+        ],
+        ['header' => 'Control de Remates'],
+        [
+            'text' => 'Registro',
+            'icon' => 'fas fa-fw fa-folder',
+            'submenu' => [
+            
                 [
                     'text' => 'Remates',
                     'url' => 'remates',
@@ -372,23 +391,13 @@ return [
                     'can' => 'remate-list',  // Verificar si el usuario tiene el permiso 'proveedor-list'
                 ],
                 [
-                    /*'text' => 'Gacetas',
-                    'url' => '#',
-                    'icon' => 'fas fa-boxes',
-                    'can' => 'producto-list',  // Verificar si el usuario tiene el permiso 'producto-list'*/
+                    'text' => 'Registros de Remates',
+                    'url' => 'registro_remates',
+                    'icon' => 'fas fa-truck',
+                    'can' => 'remate-list',  // Verificar si el usuario tiene el permiso 'proveedor-list'
                 ],
-                [
-                    'text' => 'Compras',
-                    'url' => 'compras',
-                    'icon' => 'fas fa-shopping-cart',
-                    'can' => 'compra-list',  // Verificar si el usuario tiene el permiso 'compra-list'
-                ],
-                [
-                    'text' => 'Ventas',
-                    'url' => 'ventas',
-                    'icon' => 'fas fa-cash-register',
-                    'can' => 'venta-list',  // Verificar si el usuario tiene el permiso 'venta-list'
-                ],
+            
+              
 
 
 
