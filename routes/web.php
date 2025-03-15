@@ -22,42 +22,49 @@ Route::get('/', function () {
 // Rutas de autenticación
 Auth::routes();
 
-// Redirección después del login según el rol
-Route::get('/redirect', function () {
-    $user = Auth::user();
-
-    if (!$user) {
-        return redirect()->route('home');
-    }
-
-    // Si el usuario es admin, lo redirige a adminhome
-    if ($user->hasRole('admin')) {
-        return redirect()->route('adminhome');
-    }
-
-    // Cualquier otro rol lo envía a home
-    return redirect()->route('home');
-})->middleware('auth');
-
-// Rutas principales
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/panel-admin', [AdminHomeController::class, 'index'])->name('adminhome');
-
-// Rutas protegidas
+// Rutas protegidas y basadas en roles
 Route::middleware(['auth'])->group(function () {
-    Route::resources([
-        'users' => UserController::class,
-        'roles' => RoleController::class,
-        'permissions' => PermissionController::class,
-        'races' => RaceController::class,
-        'remates' => RemateController::class,
-        'parametros' => EjemplarRaceController::class,
-        'gacetas' => GacetaController::class
-    ]);
 
+    // Rutas comunes para remates y parámetros (accesibles para ambos roles)
     Route::get('/ejemplares/{raceId}', [RemateController::class, 'getEjemplarsByRace']);
     Route::get('/validar-ejemplar/{ejemplarId}', [RemateController::class, 'validarEjemplar']);
     Route::post('remates/actualizar', [RemateController::class, 'actualizarRemate'])->name('remates.actualizarRemate');
     Route::patch('/parametros/{id}/toggle-status', [EjemplarRaceController::class, 'toggleStatus'])->name('parametros.toggleStatus');
     Route::get('/registro_remates', [RemateController::class, 'listarRemates'])->name('remates.lista_remates');
+
+    // Rutas específicas para administradores
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/panel-admin', [AdminHomeController::class, 'index'])->name('adminhome');
+        Route::resources([
+            'users' => UserController::class,
+            'roles' => RoleController::class,
+            'permissions' => PermissionController::class,
+            'races' => RaceController::class,
+            'remates' => RemateController::class,
+            'parametros' => EjemplarRaceController::class,
+            'gacetas' => GacetaController::class,
+        ]);
+    });
+
+    // Rutas específicas para ventas (y accesibles también por admin)
+    Route::middleware(['role:ventas'])->group(function () {
+        Route::get('/home', [HomeController::class, 'index'])->name('home');
+        Route::resources([
+            'races' => RaceController::class,
+            'remates' => RemateController::class,
+            'parametros' => EjemplarRaceController::class,
+            'gacetas' => GacetaController::class,
+        ]);
+    });
+
+    // Rutas de ventas accesibles por admin también
+    Route::middleware(['role:admin|ventas'])->group(function () {
+        Route::get('/home', [HomeController::class, 'index'])->name('home');
+        Route::resources([
+            'races' => RaceController::class,
+            'remates' => RemateController::class,
+            'parametros' => EjemplarRaceController::class,
+            'gacetas' => GacetaController::class,
+        ]);
+    });
 });
