@@ -2,16 +2,7 @@
 
 @section('content')
     <style>
-        .container {
-            margin-top: 30px;
-        }
-        .table-bordered {
-            border: 5px solid #47bb19;
-        }
-        .table th, .table td {
-            text-align: center;
-            vertical-align: middle;
-        }
+
         .nav-tabs .nav-link.active {
             background-color: #47bb19;
             color: white;
