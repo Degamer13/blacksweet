@@ -350,30 +350,30 @@ return [
         ],
         [
             'text' => 'Registro',
-            'icon' => 'fas fa-fw fa-folder',
+            'icon' => 'fas fa-horse', // Icono de caballo para representar carreras
             'submenu' => [
                 [
                     'text' => 'Carreras',
                     'url' => 'races',
-                    'icon' => 'fas fa-dollar-sign',
-                    'can' => 'race-list',  // Verificar si el usuario tiene el permiso 'dolar-list'
+                    'icon' => 'fas fa-flag-checkered', // Bandera a cuadros para representar carreras
+                    'can' => 'race-list',
                 ],
 
                 [
                     'text' => 'Registro de Caballos para Remates',
                     'url' => 'parametros',
-                    'icon' => 'fas fa-user-tie',
-                    'can' => 'parametro-list',  // Verificar si el usuario tiene el permiso 'cliente-list'
+                    'icon' => 'fas fa-horse-head', // Icono de cabeza de caballo para representar ejemplares
+                    'can' => 'parametro-list',
                 ],
-               
+
                 [
                     /*'text' => 'Gacetas',
                     'url' => '#',
                     'icon' => 'fas fa-boxes',
                     'can' => 'producto-list',  // Verificar si el usuario tiene el permiso 'producto-list'*/
                 ],
-               
-             
+
+
 
 
             ],
@@ -381,23 +381,23 @@ return [
         ['header' => 'Control de Remates'],
         [
             'text' => 'Registro',
-            'icon' => 'fas fa-fw fa-folder',
+            'icon' => 'fas fa-money-bill-wave', // Icono de dinero para representar apuestas
             'submenu' => [
-            
+
                 [
                     'text' => 'Remates',
                     'url' => 'remates',
-                    'icon' => 'fas fa-truck',
-                    'can' => 'remate-list',  // Verificar si el usuario tiene el permiso 'proveedor-list'
+                    'icon' => 'fas fa-gavel', // Icono de martillo para representar subastas
+                    'can' => 'remate-list',
                 ],
                 [
                     'text' => 'Registros de Remates',
                     'url' => 'registro_remates',
-                    'icon' => 'fas fa-truck',
-                    'can' => 'remate-list',  // Verificar si el usuario tiene el permiso 'proveedor-list'
+                    'icon' => 'fas fa-scroll', // Icono de pergamino para representar historial de remates
+                    'can' => 'remate-list',
                 ],
-            
-              
+
+
 
 
 

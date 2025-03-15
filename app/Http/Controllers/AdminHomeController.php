@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-/*use App\Models\User;
-use App\Models\Cliente;
-use App\Models\Proveedor;
-*/
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class AdminHomeController extends Controller
 {
@@ -24,10 +22,9 @@ class AdminHomeController extends Controller
      */
     public function index()
     {
-       /* $cantidadUsuarios = User::count();
-        $cantidadClientes = Cliente::count();
-        $cantidadProveedores = Proveedor::count();*/
+        $cantidadUsuarios = User::count();
+        $cantidadRoles = Role::count(); // Contar roles
 
-        return view('adminhome');
+        return view('adminhome', compact('cantidadUsuarios', 'cantidadRoles'));
     }
 }
