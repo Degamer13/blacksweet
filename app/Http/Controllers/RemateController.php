@@ -23,12 +23,20 @@ class RemateController extends Controller
         return view('remates.index', compact('ejemplares'));
     }
     public function listarRemates()
-    {
-        // Obtener todos los remates para la vista
-        $remates = Remate::latest()->paginate(10);
-    
-        return view('remates.lista_remates', compact('remates'));
-    }
+{
+    // Obtener todos los remates ordenados por fecha más reciente con paginación
+    $remates = Remate::latest()->paginate(10);
+
+    // Obtener los ejemplares agrupados por race_id
+    $ejemplares = DB::table('ejemplar_race')
+        ->select('race_id', 'ejemplar_name')
+        ->get()
+        ->groupBy('race_id');
+
+    // Pasar los datos a la vista
+    return view('remates.lista_remates', compact('remates', 'ejemplares'));
+}
+
     // Guardar un nuevo remate
     public function store(Request $request)
     {
@@ -44,18 +52,18 @@ class RemateController extends Controller
             'total'          => 'required|array',
             'pote'           => 'required|array',
         ]);
-    
+
         // Calcular los totales globales
         $total_subasta = array_sum($request->total);
         $porcentaje = $total_subasta * 0.30;
         $total_pagar = ($total_subasta - $porcentaje) + max($request->pote);
-        
+
         // Calcular los totales de cada subasta
         $subasta1 = array_sum($request->monto1);
         $subasta2 = array_sum($request->monto2);
         $subasta3 = array_sum($request->monto3);
         $subasta4 = array_sum($request->monto4);
-    
+
         // Iterar cada fila enviada y guardar un remate
         foreach ($request->race_id as $index => $race_id) {
             Remate::create([
@@ -80,10 +88,10 @@ class RemateController extends Controller
                 'subasta4'       => $subasta4,
             ]);
         }
-    
+
         return redirect()->route('remates.index')->with('success', 'subasta_finalizada');
     }
-    
+
   // Cargar los ejemplares activos de la carrera
   public function getEjemplarsByRace($raceId)
   {

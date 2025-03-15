@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Control de Inventario') }}</title>
+    <title>{{ config('app.name', 'Black Sweet') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -34,7 +34,7 @@
             <div class="container">
                 <!-- Nombre de la aplicación -->
                 <a class="navbar-brand" href="{{ url('/home') }}">
-                    {{ config('app.name', 'Control de Inventario') }}
+                    {{ config('app.name', 'Black Sweet') }}
                 </a>
 
                 <!-- Botón de hamburguesa para pantallas pequeñas -->
@@ -49,6 +49,11 @@
                         @can('remate-list')
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('remates.index') }}">Remates</a>
+                            </li>
+                        @endcan
+                         @can('remate-list')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('remates.lista_remates') }}">Registros de Remates</a>
                             </li>
                         @endcan
                         @can('cliente-list')

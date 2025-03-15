@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Black Sweet Remate</b>',
+    'logo' => '<b>Black Sweet</b>',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -403,7 +403,7 @@ return [
 
             ],
         ],
-        ['header' => 'labels'],
+     /*   ['header' => 'labels'],
         [
             'text' => 'Gaceta',
             'url' => 'gacetas',
@@ -420,6 +420,7 @@ return [
             'icon_color' => 'cyan',
             'url' => '#',
         ],
+        */
     ],
 
     /*

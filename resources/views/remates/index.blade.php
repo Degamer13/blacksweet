@@ -68,7 +68,7 @@
                                             <td>{{ $index + 1 }}</td>
                                             <!-- Se muestran los datos; para enviar se usan inputs (algunos readonly) -->
                                             <td>
-                                                <input type="text" name="ejemplar_name[]" class="form-control ejemplar_name" 
+                                                <input type="text" name="ejemplar_name[]" class="form-control ejemplar_name"
                                                     value="{{ $ejemplar->ejemplar_name }}" readonly>
                                             </td>
                                             <td>
@@ -84,7 +84,7 @@
                                                 <input type="number" name="monto4[]" class="form-control monto4" value="0" readonly>
                                             </td>
                                             <td>
-                                                <input type="text" name="cliente[]" class="form-control cliente" 
+                                                <input type="text" name="cliente[]" class="form-control cliente"
                                                     value="{{ $ejemplar->cliente ?? 'N/A' }}">
                                             </td>
                                             <td>
@@ -113,8 +113,11 @@
                                         <th colspan="3"></th>
                                     </tr>
                                     <tr>
-                                        <th colspan="3">Porcentaje (-30%)</th>
-                                        <th colspan="3" id="porcentaje">0</th>
+
+                                        <th colspan="3" class="d-none">
+                                            <!-- Campo oculto para el porcentaje -->
+                                            <input type="hidden" name="porcentaje" id="porcentaje_hidden" value="0">
+                                        </th>
                                         <th colspan="3"></th>
                                     </tr>
                                     <tr>
@@ -135,7 +138,6 @@
             </div>
 
             <!-- Botone: Enviar formulario -->
-           
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </form>
@@ -193,7 +195,6 @@
             actualizarTotales();
         });
 
-
         function actualizarTotales() {
             var totalM1 = 0, totalM2 = 0, totalM3 = 0, totalM4 = 0;
             var totalSubasta = 0;
@@ -236,12 +237,17 @@
             $('#subasta3').text(totalM3.toFixed(2));
             $('#subasta4').text(totalM4.toFixed(2));
             $('#total_subasta').text(totalSubasta.toFixed(2));
-            $('#porcentaje').text(porcentaje.toFixed(2));
+
+            // Actualizar el campo oculto con el porcentaje calculado
+            $('#porcentaje_hidden').val(porcentaje.toFixed(2));
+
+            // Mostrar el valor del porcentaje en el campo oculto (se sigue enviando, pero no se ve)
             $('#pote_value').text(firstPote.toFixed(2));
             $('#total_pagar').text(totalPagar.toFixed(2));
         }
     });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -255,5 +261,5 @@
             @endif
         });
     </script>
-    
+
 @endsection
