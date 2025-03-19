@@ -15,7 +15,6 @@
         font-size: 20px;
     }
 
-   
     tfoot tr th {
         font-weight: bold;
         background-color: #ddb892;
@@ -35,49 +34,16 @@
         background-color: #e9edc9;
     }
 
-    table tbody td:nth-child(1) {
-        background-color: #bc6c25;
-        color: white;
-        font-weight: bold;
-    }
-
-    table tbody td:nth-child(2) {
-        background-color: #3d405b;
-        color: white;
-        font-weight: bold !important;
-    }
-
+    table tbody td:nth-child(1) { background-color: #bc6c25; color: white; font-weight: bold; }
+    table tbody td:nth-child(2) { background-color: #3d405b; color: white; font-weight: bold !important; }
     table tbody td:nth-child(3),
     table tbody td:nth-child(4),
     table tbody td:nth-child(5),
-    table tbody td:nth-child(6) {
-        background-color: #ffcb69;
-        color: black;
-        font-weight: bold !important;
-    }
-
-    table tbody td:nth-child(7) {
-        background-color: #6a994e;
-        color: black;
-        font-weight: bold !important;
-    }
-
-    table tbody td:nth-child(8) {
-        background-color: #8ecae6;
-        color: black;
-        font-weight: bold !important;s
-    }
-
-    table tbody td:nth-child(9) {
-        background-color: #ddb892;
-        color: black;
-        font-weight: bold !important;
-    }
-     table tbody td:nth-child(10) {
-        background-color:#faf9f8;
-        color: black;
-        font-weight: bold !important;
-    }
+    table tbody td:nth-child(6) { background-color: #ffcb69; color: black; font-weight: bold !important; }
+    table tbody td:nth-child(7) { background-color: #6a994e; color: black; font-weight: bold !important; }
+    table tbody td:nth-child(8) { background-color: #8ecae6; color: black; font-weight: bold !important; }
+    table tbody td:nth-child(9) { background-color: #ddb892; color: black; font-weight: bold !important; }
+    table tbody td:nth-child(10) { background-color:#faf9f8; color: black; font-weight: bold !important; }
 </style>
 
 <div class="container">
@@ -111,7 +77,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($remates->where('race_id', $race_id) as $remate)
+                        @foreach ($remates[$race_id] ?? [] as $remate)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $remate->ejemplar_name }}</td>
@@ -128,13 +94,15 @@
                     </tbody>
                     <tfoot class="table-light">
                         @php
-                            $totalMonto1 = $remates->where('race_id', $race_id)->sum('monto1');
-                            $totalMonto2 = $remates->where('race_id', $race_id)->sum('monto2');
-                            $totalMonto3 = $remates->where('race_id', $race_id)->sum('monto3');
-                            $totalMonto4 = $remates->where('race_id', $race_id)->sum('monto4');
-                            $totalSubasta = $remates->where('race_id', $race_id)->sum('total');
+                            $totalMonto1 = $remates[$race_id]->sum('monto1') ?? 0;
+                            $totalMonto2 = $remates[$race_id]->sum('monto2') ?? 0;
+                            $totalMonto3 = $remates[$race_id]->sum('monto3') ?? 0;
+                            $totalMonto4 = $remates[$race_id]->sum('monto4') ?? 0;
+                            $totalSubasta = $remates[$race_id]->sum('total') ?? 0;
                             $porcentaje = $totalSubasta * 0.3;
-                          
+                            $pote = $remates[$race_id]->first()->pote ?? 0;
+                            $acumulado = $remates[$race_id]->first()->acumulado ?? 0;
+                            $totalPagar = $remates[$race_id]->first()->total_pagar ?? 0;
                         @endphp
                         <tr>
                             <th colspan="2">Totales</th>
@@ -156,17 +124,17 @@
                         </tr>
                         <tr>
                             <th colspan="3">Pote</th>
-                            <th colspan="3">{{ $remates->where('race_id', $race_id)->first()->pote ?? 0 }}</th>
+                            <th colspan="3">{{ $pote }}</th>
                             <th colspan="4"></th>
                         </tr>
                          <tr>
                             <th colspan="3">Acumulado</th>
-                            <th colspan="3">{{ $remates->where('race_id', $race_id)->first()->acumulado ?? 0 }}</th>
+                            <th colspan="3">{{ $acumulado }}</th>
                             <th colspan="4"></th>
                         </tr>
                         <tr>
                             <th colspan="3">Total a pagar</th>
-                            <th colspan="3">{{ $remates->where('race_id', $race_id)->first()->total_pagar ?? 0 }}</th>
+                            <th colspan="3">{{ $totalPagar }}</th>
                             <th colspan="4"></th>
                         </tr>
                     </tfoot>

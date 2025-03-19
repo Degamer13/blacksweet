@@ -23,19 +23,19 @@ class RemateController extends Controller
         return view('remates.index', compact('ejemplares'));
     }
     public function listarRemates()
-{
-    // Obtener todos los remates ordenados por fecha más reciente con paginación
-    $remates = Remate::latest()->paginate(10);
+    {
+        // Obtener los remates agrupados por race_id
+        $remates = Remate::latest()->get()->groupBy('race_id'); // Agrupar por race_id
 
-    // Obtener los ejemplares agrupados por race_id
-    $ejemplares = DB::table('ejemplar_race')
-        ->select('race_id', 'ejemplar_name')
-        ->get()
-        ->groupBy('race_id');
+        // Obtener los ejemplares agrupados por race_id
+        $ejemplares = DB::table('ejemplar_race')
+            ->select('race_id', 'ejemplar_name')
+            ->get()
+            ->groupBy('race_id');
 
-    // Pasar los datos a la vista
-    return view('remates.lista_remates', compact('remates', 'ejemplares'));
-}
+        return view('remates.lista_remates', compact('remates', 'ejemplares'));
+    }
+
 
     // Guardar un nuevo remate
     public function store(Request $request)
@@ -100,15 +100,14 @@ class RemateController extends Controller
     }
     public function LogrosRemates()
     {
-        // Obtener todos los remates ordenados por fecha más reciente con paginación
-        $remates = Remate::latest()->paginate(10);
-    
-        // Obtener los ejemplares agrupados por race_id
-        $ejemplares = DB::table('ejemplar_race')
-            ->select('race_id', 'ejemplar_name')
-            ->get()
-            ->groupBy('race_id');
-    
+         // Obtener los remates agrupados por race_id
+         $remates = Remate::latest()->get()->groupBy('race_id'); // Agrupar por race_id
+
+         // Obtener los ejemplares agrupados por race_id
+         $ejemplares = DB::table('ejemplar_race')
+             ->select('race_id', 'ejemplar_name')
+             ->get()
+             ->groupBy('race_id');
         // Pasar los datos a la vista
         return view('remates.logros_remates', compact('remates', 'ejemplares'));
     }
@@ -136,14 +135,14 @@ class RemateController extends Controller
 
   public function edit()
   {
-    
+
   }
 
 
 
   public function update(Request $request, $id)
   {
-      
+
   }
 
 
