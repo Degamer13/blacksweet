@@ -56,18 +56,24 @@ class EjemplarRaceController extends Controller
     $request->validate([
         'race_id' => 'required|array',
         'race_id.*' => 'exists:races,id',
-        'ejemplar_name' => 'required|array',
-        'ejemplar_name.*' => 'required|array', // Asegura que cada índice sea un array
-        'ejemplar_name.*.*' => 'required|string|max:255' // Valida cada ejemplar individualmente
+        'ejemplares' => 'required|array',
+        'ejemplares.*' => 'nullable|string' // Recibimos los ejemplares como JSON
     ]);
 
     try {
         foreach ($request->race_id as $index => $raceId) {
-            if (!isset($request->ejemplar_name[$index])) {
-                continue; // Evita errores si no hay ejemplares para este índice
+            if (!isset($request->ejemplares[$index]) || empty($request->ejemplares[$index])) {
+                continue; // Evita errores si no hay ejemplares
             }
 
-            foreach ($request->ejemplar_name[$index] as $ejemplarName) {
+            // Decodificar JSON
+            $ejemplares = json_decode($request->ejemplares[$index], true);
+
+            if (!is_array($ejemplares)) {
+                continue; // Evita errores si la decodificación falla
+            }
+
+            foreach ($ejemplares as $ejemplarName) {
                 EjemplarRace::create([
                     'race_id' => $raceId,
                     'ejemplar_name' => $ejemplarName,
@@ -75,11 +81,13 @@ class EjemplarRaceController extends Controller
                 ]);
             }
         }
+
         return redirect()->route('parametros.index')->with('success', 'Registros guardados correctamente.');
     } catch (\Exception $e) {
         return back()->with('error', 'Error al guardar: ' . $e->getMessage());
     }
 }
+
 
     public function show($race_id)
     {

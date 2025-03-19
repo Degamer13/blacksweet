@@ -8,7 +8,6 @@ use App\Http\Controllers\{
     RaceController,
     RemateController,
     EjemplarRaceController,
-    GacetaController,
     UserController,
     RoleController,
     PermissionController
@@ -27,10 +26,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Rutas comunes para remates y parámetros (accesibles para ambos roles)
     Route::get('/ejemplares/{raceId}', [RemateController::class, 'getEjemplarsByRace']);
-    Route::get('/validar-ejemplar/{ejemplarId}', [RemateController::class, 'validarEjemplar']);
-    Route::post('remates/actualizar', [RemateController::class, 'actualizarRemate'])->name('remates.actualizarRemate');
+
+   
     Route::patch('/parametros/{id}/toggle-status', [EjemplarRaceController::class, 'toggleStatus'])->name('parametros.toggleStatus');
     Route::get('/registro_remates', [RemateController::class, 'listarRemates'])->name('remates.lista_remates');
+    Route::get('/registro_logros_remates', [RemateController::class, 'LogrosRemates'])->name('remates.logros_remates');
 
     // Rutas específicas para administradores
     Route::middleware(['role:admin'])->group(function () {
@@ -42,7 +42,7 @@ Route::middleware(['auth'])->group(function () {
             'races' => RaceController::class,
             'remates' => RemateController::class,
             'parametros' => EjemplarRaceController::class,
-            'gacetas' => GacetaController::class,
+          
         ]);
     });
 
@@ -53,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
             'races' => RaceController::class,
             'remates' => RemateController::class,
             'parametros' => EjemplarRaceController::class,
-            'gacetas' => GacetaController::class,
+           
         ]);
     });
 
@@ -64,7 +64,7 @@ Route::middleware(['auth'])->group(function () {
             'races' => RaceController::class,
             'remates' => RemateController::class,
             'parametros' => EjemplarRaceController::class,
-            'gacetas' => GacetaController::class,
+            
         ]);
     });
 });

@@ -21,6 +21,8 @@ return new class extends Migration {
             $table->decimal('total', 10, 2);
             $table->decimal('porcentaje', 10, 2);
             $table->decimal('pote', 10, 2)->nullable();
+            $table->decimal('acumulado', 10, 2)->nullable();
+
             $table->decimal('total_pagar', 10, 2);
             $table->decimal('total_subasta', 10, 2);
 

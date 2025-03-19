@@ -134,7 +134,7 @@
                             $totalMonto4 = $remates->where('race_id', $race_id)->sum('monto4');
                             $totalSubasta = $remates->where('race_id', $race_id)->sum('total');
                             $porcentaje = $totalSubasta * 0.3;
-                          
+                            
                         @endphp
                         <tr>
                             <th colspan="2">Totales</th>
@@ -149,11 +149,7 @@
                             <th colspan="3">{{ $totalSubasta }}</th>
                             <th colspan="4"></th>
                         </tr>
-                        <tr>
-                            <th colspan="3">Porcentaje (-30%)</th>
-                            <th colspan="3">{{ $porcentaje }}</th>
-                            <th colspan="4"></th>
-                        </tr>
+                     
                         <tr>
                             <th colspan="3">Pote</th>
                             <th colspan="3">{{ $remates->where('race_id', $race_id)->first()->pote ?? 0 }}</th>
@@ -164,7 +160,7 @@
                             <th colspan="3">{{ $remates->where('race_id', $race_id)->first()->acumulado ?? 0 }}</th>
                             <th colspan="4"></th>
                         </tr>
-                        <tr>
+                    <tr>
                             <th colspan="3">Total a pagar</th>
                             <th colspan="3">{{ $remates->where('race_id', $race_id)->first()->total_pagar ?? 0 }}</th>
                             <th colspan="4"></th>
@@ -176,5 +172,19 @@
         @endforeach
     </div>
 </div>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if(session('success') == 'subasta_finalizada')
+                Swal.fire({
+                    title: '¡Subasta Finalizada!',
+                    text: 'Los datos han sido guardados correctamente.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
+            @endif
+        });
+    </script>
 @endsection

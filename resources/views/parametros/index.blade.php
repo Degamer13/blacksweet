@@ -49,7 +49,7 @@
                     </td>
                     <td>
                         @can('parametro-show')
-                        <a href="{{ route('parametros.show', $race->id) }}" class="btn btn-info">
+                        <a href="{{ route('parametros.show', $race->id) }}" class="btn btn-info" title="Visualizar">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                                 <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8ZM8 12.5c-2.485 0-4.5-2.015-4.5-4.5S5.515 3.5 8 3.5 12.5 5.515 12.5 8 10.485 12.5 8 12.5Zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"/>
                             </svg>
@@ -57,7 +57,7 @@
                         @endcan
 
                         @can('parametro-edit')
-                        <a href="{{ route('parametros.edit', $race->id) }}" class="btn btn-primary">
+                        <a href="{{ route('parametros.edit', $race->id) }}" class="btn btn-primary" title="Actualizar">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
                                 <path d="m13.498.795.149.149a1.207 1.207 0 0 1 0 1.707l-.82.82-1.707-1.707.82-.82a1.207 1.207 0 0 1 1.707 0ZM6.854 3.146 12.207 8.5l-6.854 6.854a1 1 0 0 1-.397.246l-4 1a1 1 0 0 1-1.212-1.212l1-4a1 1 0 0 1 .246-.397l6.854-6.854Z"/>
                             </svg>
@@ -69,7 +69,7 @@
                             <form action="{{ route('parametros.destroy', $race->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger">
+                                <button type="submit" class="btn btn-danger" title="Elimnar">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                         <path d="M6 1v1H3v1h10V2H9V1H6Zm0 3v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V4H6ZM4 4v8a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3V4H4Z"/>
                                     </svg>
@@ -79,10 +79,10 @@
                         @endcan
 
                         <!-- Botón de activar/desactivar -->
-                        <form action="{{ route('parametros.toggleStatus', $race->id) }}" method="POST" style="display:inline;">
+                        <form action="{{ route('parametros.toggleStatus', $race->id) }}" method="POST" style="display:inline;" >
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="btn {{ $activeEjemplars ? 'btn-primary' : 'btn-secondary' }}">
+                            <button type="submit" class="btn {{ $activeEjemplars ? 'btn-primary' : 'btn-secondary' }}" title="Activar o Desactivar">
                                 @if($activeEjemplars)
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggle-on" viewBox="0 0 16 16">
                                         <path d="M11 2a5 5 0 1 1 0 10A5 5 0 0 1 11 2Zm0 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM5 4a5 5 0 1 1 0 10A5 5 0 0 1 5 4Z"/>

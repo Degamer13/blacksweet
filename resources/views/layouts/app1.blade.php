@@ -25,6 +25,7 @@
 
     <!-- Scripts
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])-->
+    
 </head>
 <body>
     <div id="app">
@@ -54,26 +55,9 @@
                                 <a class="nav-link" href="{{ route('remates.lista_remates') }}">Registros de Remates</a>
                             </li>
                         @endcan
-                        @can('cliente-list')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('clientes.index') }}">Clientes</a>
-                            </li>
-                        @endcan
-                        @can('producto-list')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('productos.index') }}">Productos</a>
-                            </li>
-                        @endcan
-                        @can('dolar-list')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('precios.index') }}">Precio del Dólar</a>
-                            </li>
-                        @endcan
-                         @can('total-venta')
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('totales.index') }}">Total de Ventas</a>
-                            </li>
-                        @endcan
+                       
+                       
+                       
                     </ul>
 
                     <!-- Enlaces de autenticación y opciones del usuario -->

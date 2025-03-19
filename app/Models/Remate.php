@@ -11,7 +11,7 @@ class Remate extends Model
 
     protected $fillable = [
         'number', 'race_id', 'ejemplar_name', 'cliente', 'monto1', 'monto2', 'monto3', 'monto4',
-        'total', 'porcentaje', 'pote', 'total_pagar', 'total_subasta',
+        'total', 'porcentaje', 'pote', 'acumulado', 'total_pagar', 'total_subasta',
         'subasta1', 'subasta2', 'subasta3', 'subasta4'
     ];
 
