@@ -403,10 +403,10 @@ return [
 
             ],
         ],
-     /*   ['header' => 'labels'],
+        ['header' => 'labels'],
         [
-            'text' => 'Gaceta',
-            'url' => 'gacetas',
+            'text' => 'Bitacora',
+            'url' => 'bitacora',
             'icon_color' => 'red',
 
         ],
@@ -420,7 +420,7 @@ return [
             'icon_color' => 'cyan',
             'url' => '#',
         ],
-        */
+
     ],
 
     /*

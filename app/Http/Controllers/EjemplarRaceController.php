@@ -30,7 +30,7 @@ class EjemplarRaceController extends Controller
     public function toggleStatus($race_id)
 {
     $race = Race::findOrFail($race_id);
-    
+
     // Verifica si hay ejemplares activos en la carrera
     $hasActiveEjemplars = $race->ejemplarRaces()->where('status', 'activar')->exists();
 
@@ -147,4 +147,12 @@ class EjemplarRaceController extends Controller
 
         return redirect()->route('parametros.index')->with('success', 'Relaciones eliminadas correctamente.');
     }
+
+    public function destroyAll()
+{
+    EjemplarRace::truncate(); // Elimina todos los registros y reinicia los IDs autoincrementables.
+
+    return redirect()->route('parametros.index')->with('success', 'Todos los registros de EjemplarRace han sido eliminados.');
+}
+
 }

@@ -41,26 +41,15 @@
 </style>
 
 <div class="container">
-    <form action="{{ route('remates.destroyAll') }}" method="POST" onsubmit="return confirm('⚠️ ¿Estás seguro de que deseas eliminar todos los remates? Esta acción no se puede deshacer.');">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger">
-            <i class="fas fa-trash-alt"></i> Eliminar Todos los Remates
-        </button>
-    </form>
-    <a href="" class="btn btn-warning">
-        <i class="fas fa-edit"></i> Editar Todos los Remates
-    </a>
+    <h3 class="mb-3 text-center">Registros de Bitácoras</h3>
 
-    <h3 class="mb-3 text-center">Registros de Remates</h3>
-
-    @if($ejemplares->isEmpty())
+    @if($bitacoras->isEmpty())
         <div class="alert alert-warning text-center">
-            No hay carreras registradas.
+            No hay registros de bitácora disponibles.
         </div>
     @else
-        <ul class="nav nav-tabs" id="rematesTabs" role="tablist">
-            @foreach ($ejemplares as $race_id => $grupoEjemplares)
+        <ul class="nav nav-tabs" id="bitacorasTabs" role="tablist">
+            @foreach ($bitacoras as $race_id => $grupoBitacoras)
                 <li class="nav-item">
                     <a class="nav-link @if($loop->first) active @endif" id="race{{ $race_id }}-tab" data-bs-toggle="tab" href="#race{{ $race_id }}" role="tab">
                         Carrera {{ $race_id }}
@@ -69,8 +58,8 @@
             @endforeach
         </ul>
 
-        <div class="tab-content mt-3" id="rematesTabsContent">
-            @foreach ($ejemplares as $race_id => $grupoEjemplares)
+        <div class="tab-content mt-3" id="bitacorasTabsContent">
+            @foreach ($bitacoras as $race_id => $grupoBitacoras)
             <div class="tab-pane fade @if($loop->first) show active @endif" id="race{{ $race_id }}" role="tabpanel">
                 <div class="table-responsive">
                     <table class="table table-bordered">
@@ -78,52 +67,51 @@
                             <tr>
                                 <th>Nro</th>
                                 <th>Ejemplar</th>
+                                <th>Cliente</th>
                                 <th>Monto1</th>
                                 <th>Monto2</th>
                                 <th>Monto3</th>
                                 <th>Monto4</th>
-                                <th>Cliente</th>
-                                <th>Monto</th>
+                                <th>Total</th>
                                 <th>Pote</th>
                                 <th>Acumulado</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($remates[$race_id] ?? [] as $remate)
+                            @foreach ($grupoBitacoras as $bitacora)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $remate->ejemplar_name }}</td>
-                                <td>{{ $remate->monto1 }}</td>
-                                <td>{{ $remate->monto2 }}</td>
-                                <td>{{ $remate->monto3 }}</td>
-                                <td>{{ $remate->monto4 }}</td>
-                                <td>{{ $remate->cliente }}</td>
-                                <td>{{ $remate->total }}</td>
-                                <td>{{ $remate->pote }}</td>
-                                <td>{{ $remate->acumulado }}</td>
+                                <td>{{ $bitacora->ejemplar_name }}</td>
+                                <td>{{ $bitacora->cliente }}</td>
+                                <td>{{ $bitacora->monto1 }}</td>
+                                <td>{{ $bitacora->monto2 }}</td>
+                                <td>{{ $bitacora->monto3 }}</td>
+                                <td>{{ $bitacora->monto4 }}</td>
+                                <td>{{ $bitacora->total }}</td>
+                                <td>{{ $bitacora->pote }}</td>
+                                <td>{{ $bitacora->acumulado }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                         <tfoot class="table-light">
                             @php
-                                $grupoRemates = $remates[$race_id] ?? collect([]);
-                                $totalMonto1 = $grupoRemates->sum('monto1');
-                                $totalMonto2 = $grupoRemates->sum('monto2');
-                                $totalMonto3 = $grupoRemates->sum('monto3');
-                                $totalMonto4 = $grupoRemates->sum('monto4');
-                                $totalSubasta = $grupoRemates->sum('total');
+                                $totalMonto1 = $grupoBitacoras->sum('monto1');
+                                $totalMonto2 = $grupoBitacoras->sum('monto2');
+                                $totalMonto3 = $grupoBitacoras->sum('monto3');
+                                $totalMonto4 = $grupoBitacoras->sum('monto4');
+                                $totalSubasta = $grupoBitacoras->sum('total');
                                 $porcentaje = $totalSubasta * 0.3;
-                                $pote = $grupoRemates->first()->pote ?? 0;
-                                $acumulado = $grupoRemates->first()->acumulado ?? 0;
-                                $totalPagar = $grupoRemates->first()->total_pagar ?? 0;
+                                $pote = $grupoBitacoras->first()->pote ?? 0;
+                                $acumulado = $grupoBitacoras->first()->acumulado ?? 0;
+                                $totalPagar = $grupoBitacoras->first()->total_pagar ?? 0;
                             @endphp
                             <tr>
-                                <th colspan="2">Totales</th>
+                                <th colspan="3">Totales</th>
                                 <th>{{ $totalMonto1 }}</th>
                                 <th>{{ $totalMonto2 }}</th>
                                 <th>{{ $totalMonto3 }}</th>
                                 <th>{{ $totalMonto4 }}</th>
-                                <th colspan="4"></th>
+                                <th colspan="3"></th>
                             </tr>
                             <tr>
                                 <th colspan="3">Total Subasta</th>

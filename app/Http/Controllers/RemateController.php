@@ -139,21 +139,26 @@ public function store(Request $request)
       return response()->json($data); // Enviar los ejemplares como JSON
   }
 
-public function edit()
-{
+  public function edit()
+  {
+      $ejemplares = DB::table('ejemplar_race')
+          ->select('race_id', 'ejemplar_name')
+          ->get()
+          ->groupBy('race_id');
 
+      $remates = Remate::all()->groupBy('race_id');
+      return view('remates.edit', compact('ejemplares', 'remates'));
+  }
+
+
+
+
+
+public function destroyAll()
+{
+    Remate::truncate(); // Esto elimina todos los registros y reinicia los IDs
+    return redirect()->route('remates.lista_remates')->with('success', 'Todos los remates han sido eliminados.');
 }
 
-public function update()
-{
-
-}
-
-
-    public function destroy(Remate $remate)
-    {
-        $remate->delete();
-        return redirect()->route('remates.index')->with('success', 'Remate eliminado.');
-    }
 }
 

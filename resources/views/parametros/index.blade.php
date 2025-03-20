@@ -6,6 +6,14 @@
     @can('parametro-create')
     <a href="{{ route('parametros.create') }}" class="btn btn-primary mb-3">Agregar Ejemplares a Carrera</a>
     @endcan
+    <form action="{{ route('ejemplar_race.destroyAll') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar todos los registros de EjemplarRace? Esta acción no se puede deshacer.');">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> Eliminar Todos los Registros de EjemplarRace
+        </button>
+    </form>
+<br>
 
     <div class="col-12 col-md-6 mb-3">
         <form method="GET" action="{{ route('parametros.index') }}">
