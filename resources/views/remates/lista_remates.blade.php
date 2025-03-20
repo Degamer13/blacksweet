@@ -1,5 +1,4 @@
-@extends(Auth::user()->hasRole('ventas') ? 'layouts.app1' : 'layouts.admin')
-
+@extends('layouts.admin')
 @section('content')
 <style>
     .nav-tabs .nav-link.active {
