@@ -27,9 +27,13 @@ Route::middleware(['auth'])->group(function () {
     // Rutas comunes para remates y parámetros (accesibles para ambos roles)
     Route::get('/ejemplares/{raceId}', [RemateController::class, 'getEjemplarsByRace']);
 
-   
+
     Route::patch('/parametros/{id}/toggle-status', [EjemplarRaceController::class, 'toggleStatus'])->name('parametros.toggleStatus');
     Route::get('/registro_remates', [RemateController::class, 'listarRemates'])->name('remates.lista_remates');
+
+
+
+
     Route::get('/registro_logros_remates', [RemateController::class, 'LogrosRemates'])->name('remates.logros_remates');
 
     // Rutas específicas para administradores
@@ -42,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
             'races' => RaceController::class,
             'remates' => RemateController::class,
             'parametros' => EjemplarRaceController::class,
-          
+
         ]);
     });
 
@@ -53,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
             'races' => RaceController::class,
             'remates' => RemateController::class,
             'parametros' => EjemplarRaceController::class,
-           
+
         ]);
     });
 
@@ -64,7 +68,7 @@ Route::middleware(['auth'])->group(function () {
             'races' => RaceController::class,
             'remates' => RemateController::class,
             'parametros' => EjemplarRaceController::class,
-            
+
         ]);
     });
 });
