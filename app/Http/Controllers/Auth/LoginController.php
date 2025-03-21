@@ -18,7 +18,6 @@ class LoginController extends Controller
     | to conveniently provide its functionality to your applications.
     |
     */
-
     use AuthenticatesUsers;
 
     /**
@@ -56,5 +55,15 @@ class LoginController extends Controller
         }
 
         return redirect()->to($this->redirectTo);
+    }
+
+    /**
+     * Override the username method to use 'name' instead of 'email'.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return 'name'; // Cambiar 'name' por 'email'
     }
 }

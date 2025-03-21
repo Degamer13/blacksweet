@@ -2,7 +2,7 @@
 
 @section('content')
    <style>
-   
+
     .nav-tabs .nav-link.active {
         background-color: #6a994e;
         color: white;
@@ -19,7 +19,7 @@
    /* font-size: 18px !important;   Usamos !important para asegurarnos de que se aplique */
 
      font-weight: bold !important;
-     
+
 }
 
     tfoot tr th {
@@ -42,7 +42,7 @@
     }
 
     /* table tbody td {
-        font-size: 20px;  Tamaño de la letra en píxeles para todas las celdas 
+        font-size: 20px;  Tamaño de la letra en píxeles para todas las celdas
     }
 */
     table tbody td:nth-child(1) {
@@ -83,14 +83,14 @@
         color: black;
         font-weight: bold !important;
     }
- 
+
 </style>
 
 @if(isset($noRecords) && $noRecords)
    <div class="alert alert-warning text-center">
       No hay ejemplares registrados en las carreras con el estado "Activo".
    @else
-  
+
     <!-- El formulario se envía a la ruta remates.store -->
     <form id="remateForm" action="{{ route('remates.store') }}" method="POST">
         @csrf
@@ -155,11 +155,11 @@
             <td>
                 <input type="number" name="pote[]" class="form-control pote">
             </td>
-            
+
                    <td>
                    <input type="number" name="acumulado[]" class="form-control acumulado">
                    </td>
-            
+
             <input type="hidden" name="race_id[]" value="{{ $race_id }}">
         </tr>
     @endforeach
@@ -171,9 +171,9 @@
                                         <th id="subasta2">0</th>
                                         <th id="subasta3">0</th>
                                         <th id="subasta4">0</th>
-                                        
+
                                         <th colspan="4"></th>
-                                       
+
                                     </tr>
                                     <tr>
                                         <th colspan="3">Total Subasta</th>
@@ -214,7 +214,7 @@
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </form>
-   
+
     @endif
     <!-- Incluimos jQuery y Bootstrap Bundle -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

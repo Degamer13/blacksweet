@@ -11,13 +11,14 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
+                        <!-- Campo de nombre en lugar de correo -->
                         <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('User') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
 
-                                @error('email')
+                                @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -25,6 +26,7 @@
                             </div>
                         </div>
 
+                        <!-- Campo de contraseña -->
                         <div class="row mb-3">
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
 
@@ -39,6 +41,7 @@
                             </div>
                         </div>
 
+                        <!-- Opción de recordar usuario -->
                         <div class="row mb-3">
                             <div class="col-md-6 offset-md-4">
                                 <div class="form-check">
@@ -51,6 +54,7 @@
                             </div>
                         </div>
 
+                        <!-- Botón de login -->
                         <div class="row mb-0">
                             <div class="col-md-8 offset-md-4">
                                 <button type="submit" class="btn btn-primary">

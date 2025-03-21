@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends(Auth::user()->hasRole('ventas') ? 'layouts.app1' : 'layouts.admin')
 @section('content')
 <style>
     .nav-tabs .nav-link.active {
@@ -41,7 +41,7 @@
 </style>
 
 <div class="container">
-    
+
     <a href="" class="btn btn-warning">
         <i class="fas fa-edit"></i> Editar Todos los Remates
     </a>
