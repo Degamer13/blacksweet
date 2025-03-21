@@ -145,14 +145,14 @@ class EjemplarRaceController extends Controller
     {
         EjemplarRace::where('race_id', $race_id)->delete();
 
-        return redirect()->route('parametros.index')->with('success', 'Relaciones eliminadas correctamente.');
+        return redirect()->route('parametros.index')->with('success', 'La carrera y los ejemplares han sido eliminados');
     }
 
     public function destroyAll()
 {
     EjemplarRace::truncate(); // Elimina todos los registros y reinicia los IDs autoincrementables.
 
-    return redirect()->route('parametros.index')->with('success', 'Todos los registros de EjemplarRace han sido eliminados.');
+    return redirect()->route('parametros.index')->with('success', 'Todos los registros han sido eliminados.');
 }
 
 }

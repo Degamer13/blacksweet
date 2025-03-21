@@ -403,14 +403,16 @@ return [
 
             ],
         ],
-        ['header' => 'labels'],
+        ['header' => 'Registro de Bitacoras'],
         [
             'text' => 'Bitacora',
             'url' => 'bitacora',
             'icon_color' => 'red',
+            'can' => 'bitacora-list',
+           
 
         ],
-        [
+      /*  [
             'text' => 'warning',
             'icon_color' => 'yellow',
             'url' => '#',
@@ -419,7 +421,7 @@ return [
             'text' => 'information',
             'icon_color' => 'cyan',
             'url' => '#',
-        ],
+        ],*/
 
     ],
 

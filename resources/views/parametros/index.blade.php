@@ -6,13 +6,16 @@
     @can('parametro-create')
     <a href="{{ route('parametros.create') }}" class="btn btn-primary mb-3">Agregar Ejemplares a Carrera</a>
     @endcan
-    <form action="{{ route('ejemplar_race.destroyAll') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar todos los registros de EjemplarRace? Esta acción no se puede deshacer.');">
+    
+    @can('parametro-delete')
+    <form id="reiniciar-form" action="{{ route('ejemplar_race.destroyAll') }}" method="POST" >
         @csrf
         @method('DELETE')
-        <button type="submit" class="btn btn-danger">
-            <i class="fas fa-trash-alt"></i> Eliminar Todos los Registros de EjemplarRace
+        <button type="submit" class="btn btn-secondary" id="reiniciar-btn">
+            <i class="fas fa-redo"></i> Reiniciar los Registros de los Ejemplares de las Carreras
         </button>
     </form>
+    @endcan
 <br>
 
     <div class="col-12 col-md-6 mb-3">
@@ -73,18 +76,19 @@
                         @endcan
 
                         @can('parametro-delete')
-                        @if(!$activeEjemplars)
-                            <form action="{{ route('parametros.destroy', $race->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger" title="Elimnar">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                        <path d="M6 1v1H3v1h10V2H9V1H6Zm0 3v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V4H6ZM4 4v8a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3V4H4Z"/>
-                                    </svg>
-                                </button>
-                            </form>
-                        @endif
-                        @endcan
+    @if(!$activeEjemplars)
+        <form id="delete-form-{{ $race->id }}" action="{{ route('parametros.destroy', $race->id) }}" method="POST" style="display:inline;">
+            @csrf
+            @method('DELETE')
+            <button type="button" class="btn btn-danger confirm-delete" data-id="{{ $race->id }}" title="Eliminar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                    <path d="M6 1v1H3v1h10V2H9V1H6Zm0 3v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V4H6ZM4 4v8a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3V4H4Z"/>
+                </svg>
+            </button>
+        </form>
+    @endif
+@endcan
+
 
                         <!-- Botón de activar/desactivar -->
                         <form action="{{ route('parametros.toggleStatus', $race->id) }}" method="POST" style="display:inline;" >
@@ -112,4 +116,57 @@
     {{ $races->links() }}
 </div>
 </div>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const reiniciarBtn = document.getElementById("reiniciar-btn");
+        const reiniciarForm = document.getElementById("reiniciar-form");
+
+        reiniciarBtn.addEventListener("click", function (event) {
+            event.preventDefault(); // Evita el envío automático del formulario
+
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "De Realizar Dicha Acción.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Confirmar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    reiniciarForm.submit(); // Envía el formulario si confirma
+                }
+            });
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".confirm-delete");
+
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const raceId = this.getAttribute("data-id");
+                const form = document.getElementById(`delete-form-${raceId}`);
+
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "Esta acción no se puede deshacer",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // Enviar el formulario si el usuario confirma
+                    }
+                });
+            });
+        });
+    });
+</script>
+
 @endsection

@@ -8,6 +8,17 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class BitacoraController extends Controller
 {
+    // Constructor donde se definen los permisos de cada acción.
+    public function __construct()
+    {
+        // Middleware para bitacora-list, bitacora-search, y bitacora-pdf
+        $this->middleware('permission:bitacora-list|bitacora-search|bitacora-pdf', ['only' => ['index', 'search', 'generarPDF']]);
+        
+        // Si agregas CRUD más adelante, puedes agregar permisos adicionales según sea necesario.
+        $this->middleware('permission:bitacora-create', ['only' => ['create', 'store']]); // para crear
+        $this->middleware('permission:bitacora-edit', ['only' => ['edit', 'update']]); // para editar
+        $this->middleware('permission:bitacora-delete', ['only' => ['destroy']]); // para eliminar
+    }
     /**
      * Display a listing of the resource.
      */

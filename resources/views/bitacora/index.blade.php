@@ -86,6 +86,8 @@
 
 <div class="container">
     <h3 class="mb-3 text-center">Registros de Bitácoras</h3>
+@can("bitacora-search")
+    
 
     <!-- Formulario de filtro por fecha -->
     <form method="GET" action="{{ route('bitacora.index') }}" class="row mb-4">
@@ -101,6 +103,9 @@
             <button type="submit" class="btn btn-success w-100">Filtrar</button>
         </div>
     </form>
+    @endcan
+ @can("bitacora-pdf")
+     
 
     <!-- Botón para generar el PDF -->
     <form method="GET" action="{{ route('bitacora.generarPDF') }}" class="mb-4">
@@ -108,7 +113,7 @@
         <input type="hidden" name="end_date" value="{{ request('end_date') }}">
         <button type="submit" class="btn btn-danger w-100">Generar PDF</button>
     </form>
-
+    @endcan
     @if ($bitacoras->isEmpty())
         <div class="alert alert-warning text-center">
             No hay registros de bitácora disponibles en el rango seleccionado.
