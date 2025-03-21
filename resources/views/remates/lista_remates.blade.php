@@ -41,13 +41,7 @@
 </style>
 
 <div class="container">
-    <form action="{{ route('remates.destroyAll') }}" method="POST" onsubmit="return confirm('⚠️ ¿Estás seguro de que deseas eliminar todos los remates? Esta acción no se puede deshacer.');">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger">
-            <i class="fas fa-trash-alt"></i> Eliminar Todos los Remates
-        </button>
-    </form>
+    
     <a href="" class="btn btn-warning">
         <i class="fas fa-edit"></i> Editar Todos los Remates
     </a>

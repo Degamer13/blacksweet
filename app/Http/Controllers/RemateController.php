@@ -19,10 +19,16 @@ class RemateController extends Controller
             ->where('status', 'activar')  // Filtrar solo los que tengan el status 'activar'
             ->get()
             ->groupBy('race_id');  // Agrupar por race_id
-
+    
+        // Verificar si no hay ejemplares
+        if ($ejemplares->isEmpty()) {
+            return view('remates.index', ['ejemplares' => $ejemplares, 'noRecords' => true]);
+        }
+    
         // Pasar los ejemplares a la vista
         return view('remates.index', compact('ejemplares'));
     }
+    
     public function listarRemates()
     {
         // Obtener los remates agrupados por race_id
@@ -154,10 +160,9 @@ public function store(Request $request)
 
 
 
-public function destroyAll()
+public function destroy()
 {
-    Remate::truncate(); // Esto elimina todos los registros y reinicia los IDs
-    return redirect()->route('remates.lista_remates')->with('success', 'Todos los remates han sido eliminados.');
+   
 }
 
 }

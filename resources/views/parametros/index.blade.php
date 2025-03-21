@@ -38,7 +38,7 @@
         <table id="ejemplares_table" class="table table-bordered">
         <thead>
             <tr>
-                <th>ID</th>
+               
                 <th>Carrera</th>
                 <th>Estado</th>
                 <th>Acciones</th>
@@ -47,7 +47,7 @@
         <tbody>
             @foreach($races as $race)
                 <tr>
-                    <td>{{ $race->id }}</td>
+                  
                     <td>{{ $race->name }}</td>
                     <td>
                         @php

@@ -86,7 +86,11 @@
  
 </style>
 
-
+@if(isset($noRecords) && $noRecords)
+   <div class="alert alert-warning text-center">
+      No hay ejemplares registrados en las carreras con el estado "Activo".
+   @else
+  
     <!-- El formulario se envía a la ruta remates.store -->
     <form id="remateForm" action="{{ route('remates.store') }}" method="POST">
         @csrf
@@ -210,7 +214,8 @@
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </form>
-
+   
+    @endif
     <!-- Incluimos jQuery y Bootstrap Bundle -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

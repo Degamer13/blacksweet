@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+'timezone' => 'America/Caracas',
 
     /*
     |--------------------------------------------------------------------------
@@ -169,6 +169,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class, // Agregar esta línea
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ])->toArray(),
 
@@ -185,6 +186,8 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+
     ])->toArray(),
 
 ];

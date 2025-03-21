@@ -1,12 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Remate;
-use App\Models\Race;
+
 use App\Models\Bitacora;
-use App\Models\EjemplarRace; // Asegúrate de tener el modelo EjemplarRace
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BitacoraController extends Controller
 {
@@ -15,76 +13,56 @@ class BitacoraController extends Controller
      */
     public function index(Request $request)
     {
-        // Obtener las fechas de inicio y fin desde la solicitud
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-
-        // Construir la consulta para filtrar las bitácoras
-        $query = Bitacora::query();
-
-        // Filtrar por fecha de inicio si se proporciona
-        if ($startDate) {
-            $query->whereDate('created_at', '>=', $startDate);
+        // Obtén las fechas desde el formulario, si están presentes
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+    
+        // Filtrado por fechas si existen
+        $bitacorasQuery = Bitacora::query(); // Asumiendo que Bitacora es el nombre del modelo
+    
+        if ($start_date) {
+            $bitacorasQuery->whereDate('created_at', '>=', $start_date);
         }
-
-        // Filtrar por fecha de fin si se proporciona
-        if ($endDate) {
-            $query->whereDate('created_at', '<=', $endDate);
+    
+        if ($end_date) {
+            $bitacorasQuery->whereDate('created_at', '<=', $end_date);
         }
-
-        // Obtener los registros ordenados por race_id, luego number y luego created_at
-        $bitacoras = $query->orderBy('race_id', 'asc')
-                            ->orderBy('number', 'asc')
-                            ->orderBy('created_at', 'desc')
-                            ->get();
-
-        // Pasar las bitácoras a la vista
+    
+        // Obtenemos las bitácoras filtradas
+        $bitacoras = $bitacorasQuery->get()->groupBy('race_id'); // Agrupar por carrera (race_id)
+    
         return view('bitacora.index', compact('bitacoras'));
     }
 
-
-    public function create()
-    {
-        //
-    }
-
     /**
-     * Store a newly created resource in storage.
+     * Genera el PDF de las bitácoras, filtrando por fecha si es necesario.
      */
-    public function store(Request $request)
+    public function generarPDF(Request $request)
     {
-        //
+        // Obtén las fechas desde el formulario
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+    
+        // Filtrado por fechas si existen
+        $bitacorasQuery = Bitacora::query(); // Asumiendo que Bitacora es el nombre del modelo
+    
+        if ($start_date) {
+            $bitacorasQuery->whereDate('created_at', '>=', $start_date);
+        }
+    
+        if ($end_date) {
+            $bitacorasQuery->whereDate('created_at', '<=', $end_date);
+        }
+    
+        // Obtenemos las bitácoras filtradas
+        $bitacoras = $bitacorasQuery->get()->groupBy('race_id'); // Agrupar por carrera (race_id)
+    
+        // Generar PDF con los datos
+        $pdf = Pdf::loadView('bitacora.pdf', compact('bitacoras'));
+    
+        // Descargar el archivo PDF
+        return $pdf->download('bitacora_registros.pdf');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    // Otros métodos de tu controlador, como create, store, etc.
 }
