@@ -36,6 +36,7 @@
         'permission-edit',
         'permission-delete',
         'remate-list',
+        'remate-logros',
         'remate-show',
         'remate-search',
         'remate-create',

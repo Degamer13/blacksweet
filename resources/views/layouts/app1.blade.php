@@ -45,7 +45,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Enlaces de navegación agrupados en el menú de hamburguesa -->
                     <ul class="navbar-nav me-auto">
-                        @can('remate-list')
+                        @can('remate-create')
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('remates.index') }}">Remates</a>
                             </li>
@@ -54,6 +54,13 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('remates.lista_remates') }}">Registros de Remates</a>
                             </li>
+                        @endcan
+                      @can('remate-logros')
+                          
+                      
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('remates.logros_remates') }}">Carreras Finalizadas de Remates</a>
+                        </li>
                         @endcan
                        
                        

@@ -17,6 +17,8 @@
     </form>
     @endcan
 <br>
+@can('parametro-search')
+    
 
     <div class="col-12 col-md-6 mb-3">
         <form method="GET" action="{{ route('parametros.index') }}">
@@ -32,6 +34,7 @@
             </div>
         </form>
     </div>
+    @endcan
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

@@ -11,6 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 class RemateController extends Controller
 {
+
+    function __construct()
+{
+    $this->middleware('permission:remate-list|remate-create|remate-edit|remate-delete', ['only' => ['index', 'store']]);
+    $this->middleware('permission:remate-create', ['only' => ['create', 'store']]);
+    $this->middleware('permission:remate-edit', ['only' => ['edit', 'update']]);
+    $this->middleware('permission:remate-delete', ['only' => ['destroy']]);
+    $this->middleware('permission:remate-show', ['only' => ['show']]);
+    $this->middleware('permission:remate-search', ['only' => ['search']]);
+}
+
     public function index(Request $request)
     {
         // Obtener los ejemplares agrupados por race_id donde el status sea 'activar'
@@ -19,16 +30,16 @@ class RemateController extends Controller
             ->where('status', 'activar')  // Filtrar solo los que tengan el status 'activar'
             ->get()
             ->groupBy('race_id');  // Agrupar por race_id
-    
+
         // Verificar si no hay ejemplares
         if ($ejemplares->isEmpty()) {
             return view('remates.index', ['ejemplares' => $ejemplares, 'noRecords' => true]);
         }
-    
+
         // Pasar los ejemplares a la vista
         return view('remates.index', compact('ejemplares'));
     }
-    
+
     public function listarRemates()
     {
         // Obtener los remates agrupados por race_id
@@ -145,7 +156,7 @@ public function store(Request $request)
       return response()->json($data); // Enviar los ejemplares como JSON
   }
 
-  public function edit()
+  public function editGlobal()
   {
       $ejemplares = DB::table('ejemplar_race')
           ->select('race_id', 'ejemplar_name')
@@ -153,8 +164,116 @@ public function store(Request $request)
           ->groupBy('race_id');
 
       $remates = Remate::all()->groupBy('race_id');
+
       return view('remates.edit', compact('ejemplares', 'remates'));
+
+
   }
+  
+  
+  public function updateGlobal(Request $request)
+  {
+      $request->validate([
+          'race_id'        => 'required|array',
+          'ejemplar_name'  => 'required|array',
+          'cliente'        => 'nullable|array',
+          'monto1'         => 'nullable|array',
+          'monto2'         => 'nullable|array',
+          'monto3'         => 'nullable|array',
+          'monto4'         => 'nullable|array',
+          'total'          => 'nullable|array',
+          'pote'           => 'nullable|array',
+          'acumulado'      => 'nullable|array',
+      ]);
+  
+      $total_subasta = array_sum($request->total);
+      $porcentaje = $total_subasta * 0.30;
+      $total_pagar = ($total_subasta - $porcentaje) + max($request->pote) + max($request->acumulado);
+      $subasta1 = array_sum($request->monto1);
+      $subasta2 = array_sum($request->monto2);
+      $subasta3 = array_sum($request->monto3);
+      $subasta4 = array_sum($request->monto4);
+  
+      foreach ($request->race_id as $index => $race_id) {
+          $data = [
+              'number'         => $index + 1,
+              'race_id'        => $race_id,
+              'ejemplar_name'  => $request->ejemplar_name[$index],
+              'cliente'        => $request->cliente[$index] ?? null,
+              'monto1'         => $request->monto1[$index] ?? 0,
+              'monto2'         => $request->monto2[$index] ?? 0,
+              'monto3'         => $request->monto3[$index] ?? 0,
+              'monto4'         => $request->monto4[$index] ?? 0,
+              'total'          => $request->total[$index] ?? 0,
+              'pote'           => $request->pote[$index] ?? 0,
+              'acumulado'      => $request->acumulado[$index] ?? 0,
+              'total_subasta'  => $total_subasta,
+              'porcentaje'     => $porcentaje,
+              'total_pagar'    => $total_pagar,
+              'subasta1'       => $subasta1,
+              'subasta2'       => $subasta2,
+              'subasta3'       => $subasta3,
+              'subasta4'       => $subasta4,
+              'updated_at'     => now(),
+          ];
+  
+          $remate = Remate::where('race_id', $race_id)
+                          ->where('ejemplar_name', $request->ejemplar_name[$index])
+                          ->first();
+  
+          if ($remate) {
+              // Actualizar el remate
+              $remate->update($data);
+          } else {
+              // Crear un nuevo remate
+              $remate = Remate::create($data);
+          }
+  
+          // Actualizar o crear el registro en la tabla bitacora
+          $bitacoraData = [
+              'race_id'        => $race_id,
+              'ejemplar_name'  => $request->ejemplar_name[$index],
+              'cliente'        => $request->cliente[$index] ?? null,
+              'monto1'         => $request->monto1[$index] ?? 0,
+              'monto2'         => $request->monto2[$index] ?? 0,
+              'monto3'         => $request->monto3[$index] ?? 0,
+              'monto4'         => $request->monto4[$index] ?? 0,
+              'total'          => $request->total[$index] ?? 0,
+              'pote'           => $request->pote[$index] ?? 0,
+              'acumulado'      => $request->acumulado[$index] ?? 0,
+              'total_subasta'  => $total_subasta,
+              'porcentaje'     => $porcentaje,
+              'total_pagar'    => $total_pagar,
+              'subasta1'       => $subasta1,
+              'subasta2'       => $subasta2,
+              'subasta3'       => $subasta3,
+              'subasta4'       => $subasta4,
+              'updated_at'     => now(),
+          ];
+  
+          // Verificar si ya existe un registro en la bitacora basado en race_id y ejemplar_name
+          $bitacora = DB::table('bitacora')
+                          ->where('race_id', $race_id)
+                          ->where('ejemplar_name', $request->ejemplar_name[$index])
+                          ->first();
+  
+          if ($bitacora) {
+              // Si existe, actualizamos el registro en bitacora
+              DB::table('bitacora')
+                  ->where('race_id', $race_id)
+                  ->where('ejemplar_name', $request->ejemplar_name[$index])
+                  ->update($bitacoraData);
+          } else {
+              // Si no existe, insertamos un nuevo registro
+              DB::table('bitacora')->insert($bitacoraData);
+          }
+      }
+  
+      return redirect()->route('remates.lista_remates')->with('success', 'Subasta actualizada');
+  }
+  
+  
+  
 
 
 
@@ -162,7 +281,7 @@ public function store(Request $request)
 
 public function destroy()
 {
-   
+
 }
 
 }

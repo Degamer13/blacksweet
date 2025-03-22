@@ -53,6 +53,9 @@ class LoginController extends Controller
         } elseif ($user->hasRole('ventas')) {
             $this->redirectTo = '/home';  // Redirigir a la página de ventas
         }
+        elseif ($user->hasRole('usuarios')) {
+            $this->redirectTo = '/home';  // Redirigir a la página de ventas
+        }
 
         return redirect()->to($this->redirectTo);
     }

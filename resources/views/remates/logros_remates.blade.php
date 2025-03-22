@@ -1,4 +1,5 @@
-@extends(Auth::user()->hasRole('ventas') ? 'layouts.app1' : 'layouts.admin')
+@extends(Auth::user()->hasRole('ventas') || Auth::user()->hasRole('usuarios') ? 'layouts.app1' : 'layouts.admin')
+
 
 @section('content')
 <style>

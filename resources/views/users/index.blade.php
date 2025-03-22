@@ -10,9 +10,15 @@
 
     </div>
 </div>
-
+    @can('user-create')
+        
+  
      <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Agregar Usuario</a>
-    <div class="col-12 col-md-6 mb-3">
+     @endcan
+   @can('user-search')
+       
+
+     <div class="col-12 col-md-6 mb-3">
 
         <form class="">
 
@@ -25,9 +31,10 @@
         </div>
       </div>
         </form>
+    </div>
+    @endcan
 
 
-</div>
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -56,10 +63,14 @@
         </td>
 
         <td class="text-center">
+            @can('user-show')
+                
+         
             <a class="btn btn-info" href="{{ route('users.show',$user->id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                 <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
                 <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
               </svg></a>
+              @endcan
           @can('user-edit')
 
 

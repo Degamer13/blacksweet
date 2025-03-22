@@ -66,12 +66,18 @@
 </style>
 
 <div class="container">
+ @can('remate-edit')
+     
 
-    <a href="" class="btn btn-warning">
+    <a href="{{ route('remates.edit.global') }}" class="btn btn-primary">
         <i class="fas fa-edit"></i> Editar Todos los Remates
     </a>
+    @endcan
 
     <h3 class="mb-3 text-center">Registros de Remates</h3>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
     @if($ejemplares->isEmpty())
         <div class="alert alert-warning text-center">
@@ -90,6 +96,7 @@
 
         <div class="tab-content mt-3" id="rematesTabsContent">
             @foreach ($ejemplares as $race_id => $grupoEjemplares)
+
             <div class="tab-pane fade @if($loop->first) show active @endif" id="race{{ $race_id }}" role="tabpanel">
                 <div class="table-responsive">
                     <table class="table table-bordered">

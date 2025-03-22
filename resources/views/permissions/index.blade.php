@@ -11,9 +11,16 @@
         </div>
     </div>
 
+@can('permission-create')
+    
 
  <a href="{{ route('permissions.create') }}" class="btn btn-primary mb-3">Agregar Permiso</a>
-    <div class="col-12 col-md-6 mb-3">
+ @endcan
+   
+ @can('permission-search')
+     
+
+ <div class="col-12 col-md-6 mb-3">
         <form method="GET" action="{{ route('permissions.index') }}">
             <div class="input-group">
                 <input type="text" class="form-control" name="buscarpor" value="{{ $buscarpor }}" placeholder="Buscar permisos" aria-label="Search" aria-describedby="button-addon2">
@@ -23,6 +30,7 @@
             </div>
         </form>
     </div>
+    @endcan
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -40,10 +48,14 @@
                     <tr>
                         <td>{{ $permission->name }}</td>
                         <td class="text-center">
+                            @can('permission-show')
+                                
+                         
                             <a class="btn btn-info " href="{{ route('permissions.show', $permission->id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                                 <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
                                 <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
                               </svg></a>
+                              @endcan
                             @can('permission-edit')
                                 <a class="btn btn-primary" href="{{ route('permissions.edit', $permission->id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
                                     <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001"/>

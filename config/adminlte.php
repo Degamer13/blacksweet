@@ -388,7 +388,7 @@ return [
                     'text' => 'Remates',
                     'url' => 'remates',
                     'icon' => 'fas fa-gavel', // Icono de martillo para representar subastas
-                    'can' => 'remate-list',
+                    'can' => 'remate-create',
                 ],
                 [
                     'text' => 'Registros de Remates',

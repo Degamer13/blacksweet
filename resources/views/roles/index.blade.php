@@ -9,9 +9,15 @@
 
     </div>
 </div>
-
+    @can('role-create')
+        
+ 
      <a href="{{ route('roles.create') }}" class="btn btn-primary mb-3">Agregar Rol</a>
-    <div class="col-12 col-md-6 mb-3">
+     @endcan
+   @can('role-search')
+       
+ 
+     <div class="col-12 col-md-6 mb-3">
 
         <form class="">
 
@@ -27,6 +33,7 @@
 
 
 </div>
+@endcan
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -44,6 +51,9 @@
 
         <td>{{ $role->name }}</td>
         <td class="text-center">
+            @can('role-show')
+                
+            @endcan
             <a class="btn btn-info" href="{{ route('roles.show',$role->id) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                 <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
                 <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
