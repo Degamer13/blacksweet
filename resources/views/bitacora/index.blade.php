@@ -82,12 +82,37 @@
         color: black;
         font-weight: bold !important;
     }
+
+    /* Evitar desbordamiento en la barra lateral y el contenido */
+    .main-sidebar {
+        position: fixed;
+        z-index: 1050;
+        height: 100vh; /* Fijar la altura de la barra lateral al 100% de la pantalla */
+    }
+
+    .content-wrapper {
+        margin-left: 250px; /* Ajusta el margen según el tamaño de la barra lateral */
+        min-height: 100vh;  /* Asegura que el contenido ocupe al menos el alto de la pantalla */
+        overflow: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
+    }
+
+    #carreras_container {
+        max-height: 70vh; /* Limita la altura del contenedor de las carreras */
+        overflow-y: auto; /* Activa el desplazamiento vertical si es necesario */
+    }
+
+    /* Para el modal de ejemplares, asegúrate de que el contenido no se desborde */
+    .modal-dialog {
+        max-width: 90%; /* Limita el ancho del modal */
+        margin: 1.75rem auto; /* Centra el modal */
+    }
+
 </style>
 
 <div class="container">
     <h3 class="mb-3 text-center">Registros de Bitácoras</h3>
 @can("bitacora-search")
-    
+
 
     <!-- Formulario de filtro por fecha -->
     <form method="GET" action="{{ route('bitacora.index') }}" class="row mb-4">
@@ -105,7 +130,7 @@
     </form>
     @endcan
  @can("bitacora-pdf")
-     
+
 
     <!-- Botón para generar el PDF -->
     <form method="GET" action="{{ route('bitacora.generarPDF') }}" class="mb-4">
@@ -123,10 +148,10 @@
         <ul class="nav nav-tabs" id="bitacorasTabs" role="tablist">
             @foreach ($bitacoras as $race_id => $grupoBitacoras)
                 <li class="nav-item">
-                    <a class="nav-link @if($loop->first) active @endif" 
-                       id="race{{ $race_id }}-tab" 
-                       data-bs-toggle="tab" 
-                       href="#race{{ $race_id }}" 
+                    <a class="nav-link @if($loop->first) active @endif"
+                       id="race{{ $race_id }}-tab"
+                       data-bs-toggle="tab"
+                       href="#race{{ $race_id }}"
                        role="tab">
                         Carrera {{ $race_id }}
                     </a>
@@ -137,9 +162,9 @@
         <!-- Contenido de las carreras -->
         <div class="tab-content mt-3" id="bitacorasTabsContent">
             @foreach ($bitacoras as $race_id => $grupoBitacoras)
-                <div class="tab-pane fade @if($loop->first) show active @endif" 
+                <div class="tab-pane fade @if($loop->first) show active @endif"
                      id="race{{ $race_id }}" role="tabpanel">
-                    
+
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead class="table-dark">
