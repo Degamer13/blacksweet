@@ -112,8 +112,8 @@
                                     <!-- Campo hidden para ejemplar_name -->
                                     <input type="hidden" name="ejemplar_name[{{ $remate->id }}]" value="{{ $remate->ejemplar_name }}">
         
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $remate->ejemplar_name }}</td>
+                                   <td><input type="number" name="number[{{ $remate->id }}]" value="{{ $remate->number }}" class="form-control monto" data-id="{{ $remate->id }}" readonly></td>
+ <td><input type="text" name="ejemplar_name[{{ $remate->id }}]" value="{{ $remate->ejemplar_name }}" class="form-control monto" data-id="{{ $remate->id }}" readonly></td>
                                     <td><input type="number" name="monto1[{{ $remate->id }}]" value="{{ $remate->monto1 }}" class="form-control monto" data-id="{{ $remate->id }}"></td>
                                     <td><input type="number" name="monto2[{{ $remate->id }}]" value="{{ $remate->monto2 }}" class="form-control monto" data-id="{{ $remate->id }}"></td>
                                     <td><input type="number" name="monto3[{{ $remate->id }}]" value="{{ $remate->monto3 }}" class="form-control monto" data-id="{{ $remate->id }}"></td>

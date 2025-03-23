@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\EjemplarRace;
 use App\Models\Race;
+use App\Models\Remate;
 
 class EjemplarRaceController extends Controller
 {
@@ -149,10 +150,12 @@ class EjemplarRaceController extends Controller
     }
 
     public function destroyAll()
-{
-    EjemplarRace::truncate(); // Elimina todos los registros y reinicia los IDs autoincrementables.
-
-    return redirect()->route('parametros.index')->with('success', 'Todos los registros han sido eliminados.');
-}
+    {
+        EjemplarRace::truncate(); // Elimina todos los registros y reinicia los IDs autoincrementables.
+        Remate::truncate(); // Elimina todos los registros de la tabla 'remates'.
+    
+        return redirect()->route('parametros.index')->with('success', 'Todos los registros han sido eliminados.');
+    }
+    
 
 }

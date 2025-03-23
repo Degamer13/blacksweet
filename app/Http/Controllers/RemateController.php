@@ -174,6 +174,7 @@ public function store(Request $request)
   public function updateGlobal(Request $request)
   {
       $request->validate([
+        'number'=> 'required|array',
           'race_id'        => 'required|array',
           'ejemplar_name'  => 'required|array',
           'cliente'        => 'nullable|array',
@@ -196,7 +197,7 @@ public function store(Request $request)
   
       foreach ($request->race_id as $index => $race_id) {
           $data = [
-              'number'         => $index + 1,
+              'number'         => $request->number[$index],
               'race_id'        => $race_id,
               'ejemplar_name'  => $request->ejemplar_name[$index],
               'cliente'        => $request->cliente[$index] ?? null,
