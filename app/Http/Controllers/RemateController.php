@@ -39,20 +39,22 @@ class RemateController extends Controller
         // Pasar los ejemplares a la vista
         return view('remates.index', compact('ejemplares'));
     }
-
     public function listarRemates()
     {
-        // Obtener los remates agrupados por race_id
-        $remates = Remate::latest()->get()->groupBy('race_id'); // Agrupar por race_id
+        // Obtener los remates en el mismo orden que la base de datos
+        $remates = Remate::orderBy('race_id')->orderBy('id')->get()->groupBy('race_id');
 
-        // Obtener los ejemplares agrupados por race_id
+        // Obtener los ejemplares en el mismo orden que la base de datos
         $ejemplares = DB::table('ejemplar_race')
             ->select('race_id', 'ejemplar_name')
+            ->orderBy('race_id') // Ordena por race_id primero
+            ->orderBy('id') // Luego por id para mantener el orden de inserción
             ->get()
             ->groupBy('race_id');
 
         return view('remates.lista_remates', compact('remates', 'ejemplares'));
     }
+
 // Guardar un nuevo remate
 public function store(Request $request)
 {
@@ -123,19 +125,22 @@ public function store(Request $request)
 
     return redirect()->route('remates.logros_remates')->with('success', 'subasta_finalizada');
 }
-    public function LogrosRemates()
-    {
-         // Obtener los remates agrupados por race_id
-         $remates = Remate::latest()->get()->groupBy('race_id'); // Agrupar por race_id
+public function LogrosRemates()
+{
+    // Obtener los remates en el mismo orden que la base de datos
+    $remates = Remate::orderBy('race_id')->orderBy('id')->get()->groupBy('race_id');
 
-         // Obtener los ejemplares agrupados por race_id
-         $ejemplares = DB::table('ejemplar_race')
-             ->select('race_id', 'ejemplar_name')
-             ->get()
-             ->groupBy('race_id');
-        // Pasar los datos a la vista
-        return view('remates.logros_remates', compact('remates', 'ejemplares'));
-    }
+    // Obtener los ejemplares en el mismo orden que la base de datos
+    $ejemplares = DB::table('ejemplar_race')
+        ->select('race_id', 'ejemplar_name')
+        ->orderBy('race_id') // Ordena primero por race_id
+        ->orderBy('id') // Luego por id para mantener el orden de inserción
+        ->get()
+        ->groupBy('race_id');
+
+    return view('remates.logros_remates', compact('remates', 'ejemplares'));
+}
+
 
   // Cargar los ejemplares activos de la carrera
   public function getEjemplarsByRace($raceId)
@@ -169,8 +174,8 @@ public function store(Request $request)
 
 
   }
-  
-  
+
+
   public function updateGlobal(Request $request)
   {
       $request->validate([
@@ -186,7 +191,7 @@ public function store(Request $request)
           'pote'           => 'nullable|array',
           'acumulado'      => 'nullable|array',
       ]);
-  
+
       $total_subasta = array_sum($request->total);
       $porcentaje = $total_subasta * 0.30;
       $total_pagar = ($total_subasta - $porcentaje) + max($request->pote) + max($request->acumulado);
@@ -194,7 +199,7 @@ public function store(Request $request)
       $subasta2 = array_sum($request->monto2);
       $subasta3 = array_sum($request->monto3);
       $subasta4 = array_sum($request->monto4);
-  
+
       foreach ($request->race_id as $index => $race_id) {
           $data = [
               'number'         => $request->number[$index],
@@ -217,11 +222,11 @@ public function store(Request $request)
               'subasta4'       => $subasta4,
               'updated_at'     => now(),
           ];
-  
+
           $remate = Remate::where('race_id', $race_id)
                           ->where('ejemplar_name', $request->ejemplar_name[$index])
                           ->first();
-  
+
           if ($remate) {
               // Actualizar el remate
               $remate->update($data);
@@ -229,7 +234,7 @@ public function store(Request $request)
               // Crear un nuevo remate
               $remate = Remate::create($data);
           }
-  
+
           // Actualizar o crear el registro en la tabla bitacora
           $bitacoraData = [
               'race_id'        => $race_id,
@@ -251,13 +256,13 @@ public function store(Request $request)
               'subasta4'       => $subasta4,
               'updated_at'     => now(),
           ];
-  
+
           // Verificar si ya existe un registro en la bitacora basado en race_id y ejemplar_name
           $bitacora = DB::table('bitacora')
                           ->where('race_id', $race_id)
                           ->where('ejemplar_name', $request->ejemplar_name[$index])
                           ->first();
-  
+
           if ($bitacora) {
               // Si existe, actualizamos el registro en bitacora
               DB::table('bitacora')
@@ -269,12 +274,12 @@ public function store(Request $request)
               DB::table('bitacora')->insert($bitacoraData);
           }
       }
-  
+
       return redirect()->route('remates.lista_remates')->with('success', 'Subasta actualizada');
   }
-  
-  
-  
+
+
+
 
 
 
