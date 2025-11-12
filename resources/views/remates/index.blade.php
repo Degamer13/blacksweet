@@ -89,24 +89,24 @@
         z-index: 1050;
         height: 100vh; /* Fijar la altura de la barra lateral al 100% de la pantalla */
     }
-    
+
     .content-wrapper {
         margin-left: 250px; /* Ajusta el margen según el tamaño de la barra lateral */
         min-height: 100vh;  /* Asegura que el contenido ocupe al menos el alto de la pantalla */
         overflow: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
     }
-    
+
     #carreras_container {
         max-height: 70vh; /* Limita la altura del contenedor de las carreras */
         overflow-y: auto; /* Activa el desplazamiento vertical si es necesario */
     }
-    
+
     /* Para el modal de ejemplares, asegúrate de que el contenido no se desborde */
     .modal-dialog {
         max-width: 90%; /* Limita el ancho del modal */
         margin: 1.75rem auto; /* Centra el modal */
     }
-    
+
 </style>
 
 

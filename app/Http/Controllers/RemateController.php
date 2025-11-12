@@ -176,112 +176,123 @@ public function LogrosRemates()
   }
 
 
-  public function updateGlobal(Request $request)
-  {
-      $request->validate([
+public function updateGlobal(Request $request)
+{
+    $request->validate([
         'number'=> 'required|array',
-          'race_id'        => 'required|array',
-          'ejemplar_name'  => 'required|array',
-          'cliente'        => 'nullable|array',
-          'monto1'         => 'nullable|array',
-          'monto2'         => 'nullable|array',
-          'monto3'         => 'nullable|array',
-          'monto4'         => 'nullable|array',
-          'total'          => 'nullable|array',
-          'pote'           => 'nullable|array',
-          'acumulado'      => 'nullable|array',
-      ]);
+        'race_id'        => 'required|array',
+        'ejemplar_name'  => 'required|array',
+        'cliente'        => 'nullable|array',
+        'monto1'         => 'nullable|array',
+        'monto2'         => 'nullable|array',
+        'monto3'         => 'nullable|array',
+        'monto4'         => 'nullable|array',
+        'total'          => 'nullable|array',
+        'pote'           => 'nullable|array',
+        'acumulado'      => 'nullable|array',
+    ]);
 
-      $total_subasta = array_sum($request->total);
-      $porcentaje = $total_subasta * 0.30;
-      $total_pagar = ($total_subasta - $porcentaje) + max($request->pote) + max($request->acumulado);
-      $subasta1 = array_sum($request->monto1);
-      $subasta2 = array_sum($request->monto2);
-      $subasta3 = array_sum($request->monto3);
-      $subasta4 = array_sum($request->monto4);
+    // 1) Construir acumuladores por race_id
+    $totalsByRace = [];
 
-      foreach ($request->race_id as $index => $race_id) {
-          $data = [
-              'number'         => $request->number[$index],
-              'race_id'        => $race_id,
-              'ejemplar_name'  => $request->ejemplar_name[$index],
-              'cliente'        => $request->cliente[$index] ?? null,
-              'monto1'         => $request->monto1[$index] ?? 0,
-              'monto2'         => $request->monto2[$index] ?? 0,
-              'monto3'         => $request->monto3[$index] ?? 0,
-              'monto4'         => $request->monto4[$index] ?? 0,
-              'total'          => $request->total[$index] ?? 0,
-              'pote'           => $request->pote[$index] ?? 0,
-              'acumulado'      => $request->acumulado[$index] ?? 0,
-              'total_subasta'  => $total_subasta,
-              'porcentaje'     => $porcentaje,
-              'total_pagar'    => $total_pagar,
-              'subasta1'       => $subasta1,
-              'subasta2'       => $subasta2,
-              'subasta3'       => $subasta3,
-              'subasta4'       => $subasta4,
-              'updated_at'     => now(),
-          ];
+    foreach ($request->race_id as $index => $race_id) {
+        $m1 = isset($request->monto1[$index]) ? floatval($request->monto1[$index]) : 0;
+        $m2 = isset($request->monto2[$index]) ? floatval($request->monto2[$index]) : ($m1 / 2);
+        $m3 = isset($request->monto3[$index]) ? floatval($request->monto3[$index]) : ($m2 / 2);
+        $m4 = isset($request->monto4[$index]) ? floatval($request->monto4[$index]) : ($m3 / 2);
+        $total = isset($request->total[$index]) ? floatval($request->total[$index]) : ($m1 + $m2 + $m3 + $m4);
+        $pote = isset($request->pote[$index]) ? floatval($request->pote[$index]) : 0;
+        $acumulado = isset($request->acumulado[$index]) ? floatval($request->acumulado[$index]) : 0;
 
-          $remate = Remate::where('race_id', $race_id)
-                          ->where('ejemplar_name', $request->ejemplar_name[$index])
-                          ->first();
+        if (!isset($totalsByRace[$race_id])) {
+            $totalsByRace[$race_id] = [
+                'total_subasta' => 0.0,
+                'subasta1' => 0.0,
+                'subasta2' => 0.0,
+                'subasta3' => 0.0,
+                'subasta4' => 0.0,
+                'max_pote' => $pote,
+                'max_acumulado' => $acumulado,
+            ];
+        }
 
-          if ($remate) {
-              // Actualizar el remate
-              $remate->update($data);
-          } else {
-              // Crear un nuevo remate
-              $remate = Remate::create($data);
-          }
+        $totalsByRace[$race_id]['total_subasta'] += $total;
+        $totalsByRace[$race_id]['subasta1'] += $m1;
+        $totalsByRace[$race_id]['subasta2'] += $m2;
+        $totalsByRace[$race_id]['subasta3'] += $m3;
+        $totalsByRace[$race_id]['subasta4'] += $m4;
+        if ($pote > $totalsByRace[$race_id]['max_pote']) $totalsByRace[$race_id]['max_pote'] = $pote;
+        if ($acumulado > $totalsByRace[$race_id]['max_acumulado']) $totalsByRace[$race_id]['max_acumulado'] = $acumulado;
+    }
 
-          // Actualizar o crear el registro en la tabla bitacora
-          $bitacoraData = [
-              'race_id'        => $race_id,
-              'ejemplar_name'  => $request->ejemplar_name[$index],
-              'cliente'        => $request->cliente[$index] ?? null,
-              'monto1'         => $request->monto1[$index] ?? 0,
-              'monto2'         => $request->monto2[$index] ?? 0,
-              'monto3'         => $request->monto3[$index] ?? 0,
-              'monto4'         => $request->monto4[$index] ?? 0,
-              'total'          => $request->total[$index] ?? 0,
-              'pote'           => $request->pote[$index] ?? 0,
-              'acumulado'      => $request->acumulado[$index] ?? 0,
-              'total_subasta'  => $total_subasta,
-              'porcentaje'     => $porcentaje,
-              'total_pagar'    => $total_pagar,
-              'subasta1'       => $subasta1,
-              'subasta2'       => $subasta2,
-              'subasta3'       => $subasta3,
-              'subasta4'       => $subasta4,
-              'updated_at'     => now(),
-          ];
+    // 2) Actualizar/crear cada remate usando los totales por carrera
+    foreach ($request->race_id as $index => $race_id) {
+        $raceTotals = $totalsByRace[$race_id];
 
-          // Verificar si ya existe un registro en la bitacora basado en race_id y ejemplar_name
-          $bitacora = DB::table('bitacora')
-                          ->where('race_id', $race_id)
-                          ->where('ejemplar_name', $request->ejemplar_name[$index])
-                          ->first();
+        // Redondear para evitar discrepancias
+        $total_subasta = round($raceTotals['total_subasta'], 2);
+        $porcentaje = round($total_subasta * 0.30, 2);
+        $total_pagar = round(($total_subasta - $porcentaje) + $raceTotals['max_pote'] + $raceTotals['max_acumulado'], 2);
 
-          if ($bitacora) {
-              // Si existe, actualizamos el registro en bitacora
-              DB::table('bitacora')
-                  ->where('race_id', $race_id)
-                  ->where('ejemplar_name', $request->ejemplar_name[$index])
-                  ->update($bitacoraData);
-          } else {
-              // Si no existe, insertamos un nuevo registro
-              DB::table('bitacora')->insert($bitacoraData);
-          }
-      }
+        $data = [
+            'number'         => $request->number[$index],
+            'race_id'        => $race_id,
+            'ejemplar_name'  => $request->ejemplar_name[$index],
+            'cliente'        => $request->cliente[$index] ?? null,
+            'monto1'         => $request->monto1[$index] ?? 0,
+            'monto2'         => $request->monto2[$index] ?? 0,
+            'monto3'         => $request->monto3[$index] ?? 0,
+            'monto4'         => $request->monto4[$index] ?? 0,
+            'total'          => $request->total[$index] ?? 0,
+            'pote'           => $request->pote[$index] ?? 0,
+            'acumulado'      => $request->acumulado[$index] ?? 0,
+            // Totales por carrera
+            'total_subasta'  => $total_subasta,
+            'porcentaje'     => $porcentaje,
+            'total_pagar'    => $total_pagar,
+            'subasta1'       => round($raceTotals['subasta1'], 2),
+            'subasta2'       => round($raceTotals['subasta2'], 2),
+            'subasta3'       => round($raceTotals['subasta3'], 2),
+            'subasta4'       => round($raceTotals['subasta4'], 2),
+            'updated_at'     => now(),
+        ];
 
-      return redirect()->route('remates.lista_remates')->with('success', 'Subasta actualizada');
-  }
+        $remate = Remate::where('race_id', $race_id)
+                        ->where('ejemplar_name', $request->ejemplar_name[$index])
+                        ->first();
 
+        if ($remate) {
+            $remate->update($data);
+        } else {
+            $remate = Remate::create($data);
+        }
 
+        // Actualizar bitacora (usar los mismos valores por carrera)
+        $bitacoraData = array_merge(
+            [
+                'race_id' => $race_id,
+                'ejemplar_name' => $request->ejemplar_name[$index],
+            ],
+            $data
+        );
 
+        $existing = DB::table('bitacora')
+                      ->where('race_id', $race_id)
+                      ->where('ejemplar_name', $request->ejemplar_name[$index])
+                      ->first();
 
+        if ($existing) {
+            DB::table('bitacora')
+              ->where('race_id', $race_id)
+              ->where('ejemplar_name', $request->ejemplar_name[$index])
+              ->update($bitacoraData);
+        } else {
+            DB::table('bitacora')->insert($bitacoraData);
+        }
+    }
 
+    return redirect()->route('remates.lista_remates')->with('success', 'Subasta actualizada');
+}
 
 
 

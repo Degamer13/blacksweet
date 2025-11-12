@@ -68,7 +68,9 @@
 </style>
 
 <div class="container">
-    <h3 class="mb-3 text-center">Registros de Remates</h3>
+    <h3 class="mb-3 text-center">Carreras Finalizadas de Remates
+
+    </h3>
 
     @if($ejemplares->isEmpty())
         <div class="alert alert-warning text-center">

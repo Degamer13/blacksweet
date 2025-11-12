@@ -409,15 +409,23 @@ return [
             'url' => 'bitacora',
             'icon_color' => 'red',
             'can' => 'bitacora-list',
-           
+
 
         ],
-      /*  [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
+         [
+            'text' => 'Ganadores',
+            'url' => 'ganadores',
+            'icon_color' => 'green',
+        // 'can' => 'bitacora-list',
+
+
         ],
         [
+            'text' => 'bitacora de ganadores',
+            'icon_color' => 'yellow',
+            'url'  => 'ganadores_bitacora',   // la ruta definida en web.php
+        ],
+      /*  [
             'text' => 'information',
             'icon_color' => 'cyan',
             'url' => '#',

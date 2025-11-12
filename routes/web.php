@@ -11,7 +11,9 @@ use App\Http\Controllers\{
     UserController,
     RoleController,
     PermissionController,
-    BitacoraController
+    BitacoraController,
+    GanadorController,
+    GanadorBitacoraController
 };
 
 // Página de bienvenida
@@ -37,11 +39,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/remates/edit', [RemateController::class, 'editGlobal'])->name('remates.edit.global');
     Route::put('/remates/global', [RemateController::class, 'updateGlobal'])->name('remates.updateGlobal');
 
-
-
-
     Route::get('/registro_logros_remates', [RemateController::class, 'LogrosRemates'])->name('remates.logros_remates');
+    Route::get('ganadores/{id}/pdf', [GanadorController::class, 'generarPDF'])->name('ganadores.pdf');
 
+// web.php
+
+
+Route::get('ganadores-bitacora', [GanadorBitacoraController::class, 'index'])
+    ->name('ganadores_bitacora.index');
+
+Route::get('ganadores-bitacora/pdf', [GanadorBitacoraController::class, 'generarPDF'])
+    ->name('ganadores_bitacora.generarPDF');
+// Ruta AJAX para calcular monto y porcentaje
+Route::post('ganadores/calcular-monto', [GanadorController::class, 'calcularMonto'])
+     ->name('ganadores.calcularMonto');
     // Rutas específicas para administradores
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/panel-admin', [AdminHomeController::class, 'index'])->name('adminhome');
@@ -53,6 +64,8 @@ Route::middleware(['auth'])->group(function () {
             'remates' => RemateController::class,
             'parametros' => EjemplarRaceController::class,
             'bitacora'=>BitacoraController::class,
+            'ganadores'=>GanadorController::class,
+            'ganadores_bitacora'=>GanadorBitacoraController::class,
 
         ]);
     });
@@ -62,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/home', [HomeController::class, 'index'])->name('home');
         Route::resources([
             'remates' => RemateController::class,
+           // 'ganadores'=>GanadorController::class,
 
         ]);
     });
@@ -69,9 +83,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:usuarios'])->group(function () {
         Route::get('/home', [HomeController::class, 'index'])->name('home');
         Route::resources([
-           
+
             'remates' => RemateController::class,
-           
+
 
         ]);
     });

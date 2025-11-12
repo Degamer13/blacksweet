@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\EjemplarRace;
 use App\Models\Race;
 use App\Models\Remate;
+use App\Models\Ganador;
 
 class EjemplarRaceController extends Controller
 {
@@ -149,13 +150,19 @@ class EjemplarRaceController extends Controller
         return redirect()->route('parametros.index')->with('success', 'La carrera y los ejemplares han sido eliminados');
     }
 
-    public function destroyAll()
-    {
-        EjemplarRace::truncate(); // Elimina todos los registros y reinicia los IDs autoincrementables.
-        Remate::truncate(); // Elimina todos los registros de la tabla 'remates'.
-    
-        return redirect()->route('parametros.index')->with('success', 'Todos los registros han sido eliminados.');
-    }
-    
+  public function destroyAll()
+{
+    \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+    Ganador::truncate();
+    Remate::truncate();
+    EjemplarRace::truncate();
+
+    \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+    return redirect()->route('parametros.index')
+        ->with('success', 'Todos los registros han sido eliminados y los IDs reiniciados.');
+}
+
 
 }

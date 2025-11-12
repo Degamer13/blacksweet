@@ -25,7 +25,7 @@
 
     <!-- Scripts
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])-->
-    
+
 </head>
 <body>
     <div id="app">
@@ -56,15 +56,19 @@
                             </li>
                         @endcan
                       @can('remate-logros')
-                          
-                      
+
+
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('remates.logros_remates') }}">Carreras Finalizadas de Remates</a>
                         </li>
                         @endcan
-                       
-                       
-                       
+                         @can('ganador-list')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('ganadores.index') }}">Registrar Ganadores</a>
+                        </li>
+                        @endcan
+
+
                     </ul>
 
                     <!-- Enlaces de autenticación y opciones del usuario -->

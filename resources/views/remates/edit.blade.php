@@ -84,7 +84,7 @@
         <form action="{{ route('remates.updateGlobal') }}" method="POST">
             @csrf
             @method('PUT')
-        
+
             <div class="tab-content mt-3" id="rematesTabsContent">
                 @foreach ($ejemplares as $race_id => $grupoEjemplares)
                 <div class="tab-pane fade @if($loop->first) show active @endif" id="race{{ $race_id }}" role="tabpanel">
@@ -111,7 +111,7 @@
                                     <input type="hidden" name="race_id[{{ $remate->id }}]" value="{{ $race_id }}">
                                     <!-- Campo hidden para ejemplar_name -->
                                     <input type="hidden" name="ejemplar_name[{{ $remate->id }}]" value="{{ $remate->ejemplar_name }}">
-        
+
                                    <td><input type="number" name="number[{{ $remate->id }}]" value="{{ $remate->number }}" class="form-control monto" data-id="{{ $remate->id }}" readonly></td>
  <td><input type="text" name="ejemplar_name[{{ $remate->id }}]" value="{{ $remate->ejemplar_name }}" class="form-control monto" data-id="{{ $remate->id }}" readonly></td>
                                     <td><input type="number" name="monto1[{{ $remate->id }}]" value="{{ $remate->monto1 }}" class="form-control monto" data-id="{{ $remate->id }}"></td>
@@ -165,7 +165,7 @@
                 </div>
                 @endforeach
             </div>
-        
+
             <div class="text-center mt-3">
                 <button type="submit" class="btn btn-success">Guardar Cambios</button>
             </div>
@@ -184,60 +184,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const inputsPote = document.querySelectorAll(`#race${raceId}_body input[name^="pote"]`);
         const inputsAcumulado = document.querySelectorAll(`#race${raceId}_body input[name^="acumulado"]`);
 
-        let totalMonto1 = 0, totalMonto2 = 0, totalMonto3 = 0, totalMonto4 = 0, totalSubasta = 0, totalPote = 0, totalAcumulado = 0;
-
-        // Asignar el evento 'input' para cada monto
-        inputsMonto1.forEach((input, index) => {
-            input.addEventListener('input', calculateTotal);
-        });
-        inputsMonto2.forEach((input, index) => {
-            input.addEventListener('input', calculateTotal);
-        });
-        inputsMonto3.forEach((input, index) => {
-            input.addEventListener('input', calculateTotal);
-        });
-        inputsMonto4.forEach((input, index) => {
-            input.addEventListener('input', calculateTotal);
-        });
-        inputsPote.forEach((input, index) => {
-            input.addEventListener('input', calculateTotal);
-        });
-        inputsAcumulado.forEach((input, index) => {
-            input.addEventListener('input', calculateTotal);
-        });
-
         function calculateTotal() {
-            totalMonto1 = 0;
-            totalMonto2 = 0;
-            totalMonto3 = 0;
-            totalMonto4 = 0;
-            totalSubasta = 0;
-            totalPote = 0;
-            totalAcumulado = 0;
+            let totalMonto1 = 0, totalMonto2 = 0, totalMonto3 = 0, totalMonto4 = 0, totalSubasta = 0;
 
-            // Rellenar el pote con el valor de la primera fila
-            const firstPote = inputsPote[0].value;
-            // Tomar solo el primer valor de acumulado
-            const firstAcumulado = inputsAcumulado[0].value;
+            const firstPote = parseFloat(inputsPote[0]?.value || 0);
+            const firstAcumulado = parseFloat(inputsAcumulado[0]?.value || 0);
 
-            inputsPote.forEach((input, index) => {
-                input.value = firstPote; // Rellenar el pote con el valor de la primera fila
-            });
-
-            inputsAcumulado.forEach((input, index) => {
-                input.value = firstAcumulado; // Rellenar el acumulado con el valor de la primera fila
-            });
+            inputsPote.forEach((input) => input.value = firstPote);
+            inputsAcumulado.forEach((input) => input.value = firstAcumulado);
 
             inputsMonto1.forEach((input, index) => {
                 let monto1 = parseFloat(input.value) || 0;
-                let monto2 = parseFloat(inputsMonto2[index].value) || monto1 / 2;  // Si monto2 es vacío, se calcula a partir de monto1
-                let monto3 = parseFloat(inputsMonto3[index].value) || monto2 / 2;  // Lo mismo para monto3, depende de monto2
-                let monto4 = parseFloat(inputsMonto4[index].value) || monto3 / 2;  // Y lo mismo para monto4, depende de monto3
+                let monto2 = parseFloat(inputsMonto2[index].value) || monto1 / 2;
+                let monto3 = parseFloat(inputsMonto3[index].value) || monto2 / 2;
+                let monto4 = parseFloat(inputsMonto4[index].value) || monto3 / 2;
 
-                // Actualizamos los valores de monto2, monto3 y monto4 si el usuario ha editado alguno
-                if (!inputsMonto2[index].value) inputsMonto2[index].value = monto1 / 2;  // Si monto2 está vacío, lo calculamos
-                if (!inputsMonto3[index].value) inputsMonto3[index].value = monto2 / 2;  // Si monto3 está vacío, lo calculamos
-                if (!inputsMonto4[index].value) inputsMonto4[index].value = monto3 / 2;  // Lo mismo para monto4
+                if (!inputsMonto2[index].value) inputsMonto2[index].value = monto2;
+                if (!inputsMonto3[index].value) inputsMonto3[index].value = monto3;
+                if (!inputsMonto4[index].value) inputsMonto4[index].value = monto4;
 
                 const total = monto1 + monto2 + monto3 + monto4;
                 inputsTotal[index].value = total;
@@ -249,7 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 totalSubasta += total;
             });
 
-            // Update the totals in the tfoot
             document.getElementById(`totalMonto1_${raceId}`).textContent = totalMonto1;
             document.getElementById(`totalMonto2_${raceId}`).textContent = totalMonto2;
             document.getElementById(`totalMonto3_${raceId}`).textContent = totalMonto3;
@@ -257,15 +220,21 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById(`totalSubasta_${raceId}`).textContent = totalSubasta;
             document.getElementById(`porcentaje_${raceId}`).textContent = totalSubasta * 0.3;
             document.getElementById(`totalPote_${raceId}`).textContent = firstPote;
-            document.getElementById(`totalAcumulado_${raceId}`).textContent = firstAcumulado; // Mostrar el primer acumulado
-            document.getElementById(`totalPagar_${raceId}`).textContent = totalSubasta - (totalSubasta * 0.3) + parseFloat(firstPote) + parseFloat(firstAcumulado); // Sumar solo el primer acumulado al total a pagar
+            document.getElementById(`totalAcumulado_${raceId}`).textContent = firstAcumulado;
+            document.getElementById(`totalPagar_${raceId}`).textContent = totalSubasta - (totalSubasta * 0.3) + firstPote + firstAcumulado;
         }
+
+        // Enganchar eventos
+        [...inputsMonto1, ...inputsMonto2, ...inputsMonto3, ...inputsMonto4, ...inputsPote, ...inputsAcumulado]
+            .forEach(input => input.addEventListener('input', calculateTotal));
+
+        // 🔹 Ejecutar la primera vez para que no aparezca en cero
+        calculateTotal();
     };
 
     @foreach ($ejemplares as $race_id => $grupoEjemplares)
         updateTotals({{ $race_id }});
     @endforeach
 });
-
 </script>
 @endsection
